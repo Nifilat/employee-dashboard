@@ -1,69 +1,102 @@
-# React + TypeScript + Vite
+# 👥 Employee Management Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A fully type-safe and modular employee management system designed for HR teams and administrators. Built with scalability and usability in mind, this system allows you to manage employee data seamlessly—from onboarding to offboarding—with powerful filtering, sorting, and analytics features.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## ✅ Project Summary
 
-## Expanding the ESLint configuration
+This project allows **Admins/HR Managers** to:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Add, edit, view, and delete employee records
+- Assign roles, departments, supervisors, and statuses
+- Track key metadata like hire date, contract type, and probation status
+- Filter, search, and sort employees efficiently
+- Manage the platform through a strongly-typed, modular architecture
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+## 🧩 Features
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### 👤 Employee Management
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+- Add/edit/delete employee profiles
+- Assign department, role, supervisor, and employment status
+- Support contract types: `Permanent`, `Contract`, `Intern`
+- Store employee details:
+  - Full name
+  - Email & phone number
+  - Hire date
+  - Emergency contact
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### 🔍 Filtering & Search
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- Filter by:
+  - Department
+  - Role
+  - Status (Active, On Leave, etc.)
+  - Contract type
+- Search employees by:
+  - Name
+  - ID
+  - Email
+- Sort employees by:
+  - Name (A–Z, Z–A)
+  - Hire date (Newest–Oldest, Oldest–Newest)
+
+### 📊 Dashboard Summary
+
+- Total number of employees
+- Visual breakdown by:
+  - Department
+  - Employment status
+- Highlight:
+  - Newly hired employees
+  - Employees on probation
+
+### 🧾 Persistence & Export *(Optional)*
+
+- Persist data using:
+  - `localStorage` or `indexedDB`
+  - Or connect to a mock API (e.g. [MockAPI.io](https://mockapi.io/))
+- Export records to:
+  - JSON
+  - CSV
+
+---
+
+## 🧠 Bonus Challenges
+
+- 🔐 **Authentication**
+  - Admin vs Viewer role-based access control
+- 🖼️ **Profile Photos**
+  - Support for Base64 strings or external URLs
+- 🌙 **Dark Mode**
+  - Toggle between light and dark themes
+
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend:** React + Vite
+- **Language:** TypeScript
+- **Styling:** TailwindCSS
+- **State Management:** useState, useMemo (can scale to Zustand/Redux)
+- **Data:** MockAPI / localStorage / JSON files
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js (v18 or higher recommended)
+- Package Manager: `npm`, `pnpm`, or `yarn`
+
+### Installation
+
+```bash
+git clone https://github.com/your-username/employee-management-dashboard.git
+cd employee-management-dashboard
+npm install
+npm run dev
