@@ -1,44 +1,44 @@
 import React, { useState } from 'react';
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { auth } from "@/config/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { getFirestore, doc, getDoc } from "firebase/firestore";
-import { useAuth } from "@/context/AuthContext";
-import { Navigate } from "react-router-dom";
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { auth } from '@/config/firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import { useAuth } from '@/context/AuthContext';
+import { Navigate } from 'react-router-dom';
 
 const db = getFirestore();
 
 export const LoginPage: React.FC = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
 
   // If already logged in and authorized, redirect to /people
-  if (user && (user.role === "admin" || user.role === "hr")) {
+  if (user && (user.role === 'admin' || user.role === 'hr')) {
     return <Navigate to="/people" replace />;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    setError('');
     setLoading(true);
     try {
       const userCred = await signInWithEmailAndPassword(auth, email, password);
-      const userDoc = await getDoc(doc(db, "user-roles", userCred.user.uid));
+      const userDoc = await getDoc(doc(db, 'user-roles', userCred.user.uid));
       const userData = userDoc.data();
-      if (!userData || (userData.role !== "admin" && userData.role !== "hr")) {
-        setError("Access denied: Only admins and HR managers can login.");
+      if (!userData || (userData.role !== 'admin' && userData.role !== 'hr')) {
+        setError('Access denied: Only admins and HR managers can login.');
         await auth.signOut();
         setLoading(false);
         return;
       }
       // No need for manual redirect, context will trigger rerender and redirect above
     } catch (err: any) {
-      setError(err.message || "Login failed");
+      setError(err.message || 'Login failed');
     } finally {
       setLoading(false);
     }
@@ -88,7 +88,7 @@ export const LoginPage: React.FC = () => {
               className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold"
               disabled={loading}
             >
-              {loading ? "Logging in..." : "Login"}
+              {loading ? 'Logging in...' : 'Login'}
             </Button>
           </form>
         </CardContent>

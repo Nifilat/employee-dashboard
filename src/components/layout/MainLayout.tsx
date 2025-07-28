@@ -3,11 +3,13 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 
 export const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const location = useLocation();
 
-  // Show nothing or a loader while auth is loading
-  if (user === undefined) return null;
+  if (loading) {
+    // Optionally show a spinner or nothing while loading
+    return null;
+  }
 
   // Not logged in or not admin/hr
   if (!user || (user.role !== 'admin' && user.role !== 'hr')) {
