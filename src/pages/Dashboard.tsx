@@ -1,19 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { StatsCards } from '../components/dashboard/StatsCards';
 import { EmployeeGrowthChart } from '../components/charts/EmployeeGrowthChart';
 import { DepartmentDistributionChart } from '../components/charts/DepartmentDistributionChart';
-import { fetchEmployees } from '@/services/api';
-import type { Employee } from '../types';
+import type { DashboardProps } from './types';
 
-export const Dashboard: React.FC = () => {
-  const [employees, setEmployees] = useState<Employee[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchEmployees()
-      .then(data => setEmployees(data))
-      .finally(() => setLoading(false));
-  }, []);
+export const Dashboard: React.FC<DashboardProps> = ({ employees }) => {
 
   return (
     <div className="space-y-6">
