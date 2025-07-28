@@ -5,9 +5,9 @@ export interface Employee {
   email: string;
   phone: string;
   jobTitle: string;
-  department: Department; 
-  contractType: ContractType; 
-  status: EmploymentStatus; 
+  department: Department;
+  contractType: ContractType;
+  status: EmploymentStatus;
   hireDate: string;
   supervisorId?: string;
   emergencyContact: {
@@ -39,10 +39,8 @@ export type Department = (typeof Department)[keyof typeof Department];
 
 export const ContractType = {
   PERMANENT: 'Permanent',
-  TEMPORARY: 'Temporary',
   CONTRACT: 'Contract',
   INTERN: 'Intern',
-  FREELANCE: 'Freelance',
 } as const;
 
 export type ContractType = (typeof ContractType)[keyof typeof ContractType];
@@ -53,7 +51,6 @@ export const EmploymentStatus = {
   OFF_BOARDING: 'Off-boarding',
   PROBATION: 'Probation',
   DISMISSED: 'Dismissed',
-  
 } as const;
 
 export type EmploymentStatus = (typeof EmploymentStatus)[keyof typeof EmploymentStatus];
@@ -64,6 +61,7 @@ export interface EmployeeFilters {
   statusFilter: string;
   departmentFilter: string;
   employmentTypeFilter: string;
+  jobTitleFilter: string;
   sortBy: SortOption;
 }
 
@@ -73,4 +71,3 @@ export interface MenuItem {
   icon: React.ComponentType<any>;
   isActive: boolean;
 }
-

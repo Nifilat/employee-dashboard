@@ -11,52 +11,52 @@ interface AuthUser {
   profilePhoto?: string;
 }
 
-const AuthContext = createContext<{ user: AuthUser | null }>({ user: null });
+const AuthContext = createContext<{ user: AuthUser | null; loading: boolean }>({
+  user: null,
+  loading: true,
+});
 
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-  const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-    if (firebaseUser) {
-      const db = getFirestore();
-      const userRoleDoc = await getDoc(doc(db, 'user-roles', firebaseUser.uid));
-      const userRoleData = userRoleDoc.data();
-      if (userRoleData) {
-        let displayName = '';
-        let profilePhoto = '';
-        // If you store a reference to the Users doc
-        if (userRoleData.uid && userRoleData.uid.path) {
-          const userDocRef = doc(db, userRoleData.uid.path);
-          const userDocSnap = await getDoc(userDocRef);
-          const userData = userDocSnap.data();
-          if (userData) {
-            displayName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim();
-            profilePhoto = userData.profilePhoto || '';
+    const unsubscribe = onAuthStateChanged(auth, async firebaseUser => {
+      if (firebaseUser) {
+        const db = getFirestore();
+        const userRoleDoc = await getDoc(doc(db, 'user-roles', firebaseUser.uid));
+        const userRoleData = userRoleDoc.data();
+        if (userRoleData) {
+          let displayName = '';
+          let profilePhoto = '';
+          if (userRoleData.uid && userRoleData.uid.path) {
+            const userDocRef = doc(db, userRoleData.uid.path);
+            const userDocSnap = await getDoc(userDocRef);
+            const userData = userDocSnap.data();
+            if (userData) {
+              displayName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim();
+              profilePhoto = userData.profilePhoto || '';
+            }
           }
+          setUser({
+            uid: firebaseUser.uid,
+            email: firebaseUser.email || '',
+            role: userRoleData.role,
+            displayName,
+            profilePhoto,
+          });
+        } else {
+          setUser(null);
         }
-        setUser({
-          uid: firebaseUser.uid,
-          email: firebaseUser.email || '',
-          role: userRoleData.role,
-          displayName,
-          profilePhoto,
-        });
       } else {
         setUser(null);
       }
-    } else {
-      setUser(null);
-    }
-  });
-  return () => unsubscribe();
-}, []);
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
 
-  return (
-    <AuthContext.Provider value={{ user }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ user, loading }}>{children}</AuthContext.Provider>;
 };
