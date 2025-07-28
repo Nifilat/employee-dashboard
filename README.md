@@ -54,7 +54,7 @@ This project allows **Admins/HR Managers** to:
   - Newly hired employees
   - Employees on probation
 
-### 🧾 Persistence & Export *(Optional)*
+### 🧾 Persistence & Export _(Optional)_
 
 - Persist data using:
   - `localStorage` or `indexedDB`
@@ -100,3 +100,4 @@ git clone https://github.com/your-username/employee-management-dashboard.git
 cd employee-management-dashboard
 npm install
 npm run dev
+```
