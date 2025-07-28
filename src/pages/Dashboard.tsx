@@ -7,7 +7,7 @@ import type { Employee } from '../types';
 
 export const Dashboard: React.FC = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
-  const [setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchEmployees()
