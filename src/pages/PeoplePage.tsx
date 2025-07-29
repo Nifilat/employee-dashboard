@@ -1,5 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { Plus, Filter, ArrowUpDown, Download, Search, Users } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import {
+  Plus,
+  Filter,
+  ArrowUpDown,
+  Download,
+  Search,
+  Users,
+  Eye,
+  MoreVertical,
+  Trash2,
+  Edit,
+} from 'lucide-react';
+import {
+  useReactTable,
+  getCoreRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  getFilteredRowModel,
+  flexRender,
+  type ColumnDef,
+  type SortingState,
+  type ColumnFiltersState,
+} from '@tanstack/react-table';
 import {
   filteredEmployees as filterEmployeesUtil,
   getUniqueDepartments,
@@ -7,9 +29,8 @@ import {
   getAvatarUrl,
   formatDate,
 } from '../utils';
-import type { Employee, SortOption, EmployeeFilters } from '../types';
+import type { Employee } from '../types';
 import { statusTabs } from '../constants';
-import { ActionDropdown } from '../components/actions/ActionDropdown';
 import { EmployeeModal } from '../components/modals/EmployeeModal';
 import { ViewEmployeeModal } from '../components/modals/ViewEmployeeModal';
 import { ExportModal } from '../components/modals/ExportModal';
@@ -24,14 +45,30 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from '@/components/ui';
+import type { PeoplePageProps } from './types';
+import type { EmployeeFilters } from '../types';
+import type { SortOption } from '../types';
 
-interface PeoplePageProps {
-  employees: Employee[];
-  onAddEmployee: (employee: Employee) => void;
-  onUpdateEmployee: (employee: Employee) => void;
-  onDeleteEmployee: (employeeId: string) => void;
-}
+const EMPLOYEES_PER_PAGE = 5;
 
 export const PeoplePage: React.FC<PeoplePageProps> = ({
   employees,
@@ -39,21 +76,26 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
   onUpdateEmployee,
   onDeleteEmployee,
 }) => {
+  const [globalFilter, setGlobalFilter] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [departmentFilter, setDepartmentFilter] = useState('');
   const [employmentTypeFilter, setEmploymentTypeFilter] = useState('');
   const [jobTitleFilter, setJobTitleFilter] = useState('');
-  const [sortBy, setSortBy] = useState<SortOption>('name');
+  const [sortBy, setSortBy] = useState<SortOption>('date');
   const [showFilters, setShowFilters] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [showEmployeeModal, setShowEmployeeModal] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
-  const [selectedEmployees, setSelectedEmployees] = useState<string[]>([]);
-  const [selectAll, setSelectAll] = useState(false);
+  const [rowSelection, setRowSelection] = useState({});
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
-  // Use utility for filtering
+  const uniqueDepartments = getUniqueDepartments(employees);
+  const uniqueJobTitles = getUniqueJobTitles(employees);
+
   const filters: EmployeeFilters = {
     searchQuery,
     statusFilter,
@@ -64,26 +106,193 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
   };
   const filtered = filterEmployeesUtil(employees, filters);
 
-  const uniqueDepartments = getUniqueDepartments(employees);
-  const uniqueJobTitles = getUniqueJobTitles(employees);
+  // Actions Menu Component
+  const ActionsMenu: React.FC<{ employee: Employee }> = ({ employee }) => (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon" className="text-gray-400 hover:text-gray-600">
+          <span className="sr-only">Open actions</span>
+          <MoreVertical size={20} />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-44">
+        <DropdownMenuItem
+          onSelect={(e) => {
+            e.preventDefault();
+            handleView(employee);
+          }}
+          className="flex items-center gap-2"
+        >
+          <Eye size={16} />
+          View Details
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onSelect={(e) => {
+            e.preventDefault();
+            handleEdit(employee);
+          }}
+          className="flex items-center gap-2"
+        >
+          <Edit size={16} />
+          Edit
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onSelect={(e) => {
+            e.preventDefault();
+            handleDelete(employee);
+          }}
+          className="flex items-center gap-2 text-red-600 focus:text-red-700"
+        >
+          <Trash2 size={16} />
+          Delete
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
 
-  const handleSelectAll = (checked: boolean) => {
-    setSelectAll(checked);
-    setSelectedEmployees(checked ? filtered.map(emp => emp.id) : []);
-  };
-
-  const handleSelectEmployee = (employeeId: string, checked: boolean) => {
-    setSelectedEmployees(
-      checked
-        ? [...selectedEmployees, employeeId]
-        : selectedEmployees.filter(id => id !== employeeId)
+  // Custom global filter function
+  const globalFilterFn = (row: any, columnId: string, value: string) => {
+    const employee = row.original as Employee;
+    const searchValue = value.toLowerCase();
+    
+    // Search in firstName, lastName, and email
+    const firstName = (employee.firstName || '').toLowerCase();
+    const lastName = (employee.lastName || '').toLowerCase();
+    const email = (employee.email || '').toLowerCase();
+    const fullName = `${firstName} ${lastName}`;
+    
+    return (
+      firstName.includes(searchValue) ||
+      lastName.includes(searchValue) ||
+      fullName.includes(searchValue) ||
+      email.includes(searchValue)
     );
-    if (!checked) setSelectAll(false);
   };
 
-  useEffect(() => {
-    setSelectAll(selectedEmployees.length === filtered.length && filtered.length > 0);
-  }, [selectedEmployees, filtered]);
+  // Define columns for TanStack Table
+  const columns = useMemo<ColumnDef<Employee>[]>(
+    () => [
+      {
+        id: 'select',
+        header: ({ table }) => (
+          <Checkbox
+            checked={table.getIsAllPageRowsSelected()}
+            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+            aria-label="Select all"
+          />
+        ),
+        cell: ({ row }) => (
+          <Checkbox
+            checked={row.getIsSelected()}
+            onCheckedChange={(value) => row.toggleSelected(!!value)}
+            aria-label="Select row"
+          />
+        ),
+        enableSorting: false,
+        enableHiding: false,
+        enableGlobalFilter: false,
+      },
+      {
+        accessorKey: 'name',
+        header: 'Name',
+        cell: ({ row }) => {
+          const employee = row.original;
+          return (
+            <div className="flex items-center gap-3">
+              <Avatar
+                name={`${employee.firstName} ${employee.lastName}`}
+                imageUrl={
+                  employee.profilePhoto ||
+                  getAvatarUrl(employee.firstName, employee.lastName)
+                }
+                size="sm"
+              />
+              <div>
+                <div className="font-medium text-gray-900">
+                  {employee.firstName} {employee.lastName}
+                </div>
+                <div className="text-sm text-gray-500">
+                  {(employee.email || '').toLowerCase()}
+                </div>
+              </div>
+            </div>
+          );
+        },
+        enableSorting: true,
+        sortingFn: (rowA, rowB) => {
+          const nameA = `${rowA.original.firstName} ${rowA.original.lastName}`;
+          const nameB = `${rowB.original.firstName} ${rowB.original.lastName}`;
+          return nameA.localeCompare(nameB);
+        },
+        // Enable this column for global filtering and provide accessor for searching
+        enableGlobalFilter: true,
+        accessorFn: (row) => `${row.firstName} ${row.lastName} ${row.email}`,
+      },
+      {
+        accessorKey: 'hireDate',
+        header: 'Hire Date',
+        cell: ({ row }) => (
+          <div className="text-sm text-gray-900">
+            {formatDate(row.original.hireDate)}
+          </div>
+        ),
+        enableSorting: true,
+      },
+      {
+        accessorKey: 'jobTitle',
+        header: 'Job Title',
+        cell: ({ row }) => (
+          <div className="text-sm text-gray-900">{row.original.jobTitle}</div>
+        ),
+        enableSorting: true,
+      },
+      {
+        accessorKey: 'contractType',
+        header: 'Employment Type',
+        cell: ({ row }) => (
+          <div className="text-sm text-gray-900">{row.original.contractType}</div>
+        ),
+        enableSorting: true,
+        enableGlobalFilter: false,
+      },
+      {
+        id: 'actions',
+        header: '',
+        cell: ({ row }) => <ActionsMenu employee={row.original} />,
+        enableSorting: false,
+        enableGlobalFilter: false,
+      },
+    ],
+    []
+  );
+
+  // Initialize TanStack Table
+  const table = useReactTable({
+    data: filtered,
+    columns,
+    state: {
+      sorting,
+      columnFilters,
+      rowSelection,
+      globalFilter,
+    },
+    enableRowSelection: true,
+    onRowSelectionChange: setRowSelection,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    onGlobalFilterChange: setGlobalFilter,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    globalFilterFn: globalFilterFn,
+    initialState: {
+      pagination: {
+        pageSize: EMPLOYEES_PER_PAGE,
+      },
+    },
+  });
 
   const handleView = (employee: Employee) => {
     setSelectedEmployee(employee);
@@ -96,9 +305,8 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
   };
 
   const handleDelete = (employee: Employee) => {
-    if (window.confirm(`Are you sure you want to delete ${employee.firstName}?`)) {
-      onDeleteEmployee(employee.id);
-    }
+    setSelectedEmployee(employee);
+    setShowDeleteDialog(true);
   };
 
   const handleSaveEmployee = (employeeData: Employee) => {
@@ -108,6 +316,15 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
       onAddEmployee(employeeData);
     }
     setShowEmployeeModal(false);
+    setSelectedEmployee(null);
+  };
+
+  const clearFilters = () => {
+    setDepartmentFilter('');
+    setEmploymentTypeFilter('');
+    setJobTitleFilter('');
+    setGlobalFilter('');
+    setColumnFilters([]);
   };
 
   return (
@@ -115,7 +332,7 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900">People</h1>
+          <h1 className="text-2xl font-semibold text-gray-900">Employees</h1>
           <p className="text-gray-600 text-sm">
             Manage and collaborate within your organization's teams
           </p>
@@ -145,7 +362,7 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
       {/* Status Tabs */}
       <div className="border-b border-gray-200 overflow-x-auto">
         <div className="flex gap-8 min-w-max">
-          {statusTabs.map(status => (
+          {statusTabs.map((status) => (
             <Button
               key={status}
               variant="ghost"
@@ -182,9 +399,9 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
             />
             <Input
               type="text"
-              placeholder="Search"
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
+              placeholder="Search employees..."
+              value={globalFilter ?? ''}
+              onChange={(e) => setGlobalFilter(e.target.value)}
               className="pl-10"
             />
           </div>
@@ -198,18 +415,6 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
             <Filter size={16} />
             Filters
           </Button>
-
-          {/* Sort Dropdown */}
-          <Select value={sortBy} onValueChange={value => setSortBy(value as SortOption)}>
-            <SelectTrigger className="w-fit">
-              <ArrowUpDown size={16} className="mr-2" />
-              <SelectValue placeholder="Sort by Name" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="name">Sort by Name</SelectItem>
-              <SelectItem value="date">Sort by Date</SelectItem>
-            </SelectContent>
-          </Select>
         </div>
 
         {/* Advanced Filters */}
@@ -220,14 +425,14 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
                 <Label htmlFor="department-filter">Department</Label>
                 <Select
                   value={departmentFilter || undefined}
-                  onValueChange={value => setDepartmentFilter(value || '')}
+                  onValueChange={(value) => setDepartmentFilter(value || '')}
                 >
                   <SelectTrigger id="department-filter">
                     <SelectValue placeholder="All Departments" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Departments</SelectItem>
-                    {uniqueDepartments.map(dept => (
+                    {uniqueDepartments.map((dept) => (
                       <SelectItem key={dept} value={dept}>
                         {dept}
                       </SelectItem>
@@ -240,7 +445,7 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
                 <Label htmlFor="employment-type-filter">Employment Type</Label>
                 <Select
                   value={employmentTypeFilter || undefined}
-                  onValueChange={value =>
+                  onValueChange={(value) =>
                     setEmploymentTypeFilter(value === 'all' ? '' : value || '')
                   }
                 >
@@ -260,14 +465,14 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
                 <Label htmlFor="job-title-filter">Job Title</Label>
                 <Select
                   value={jobTitleFilter || undefined}
-                  onValueChange={value => setJobTitleFilter(value === 'all' ? '' : value || '')}
+                  onValueChange={(value) => setJobTitleFilter(value === 'all' ? '' : value || '')}
                 >
                   <SelectTrigger id="job-title-filter">
                     <SelectValue placeholder="All Titles" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Titles</SelectItem>
-                    {uniqueJobTitles.map(title => (
+                    {uniqueJobTitles.map((title) => (
                       <SelectItem key={title} value={title}>
                         {title}
                       </SelectItem>
@@ -279,12 +484,7 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
               <div className="flex items-end">
                 <Button
                   variant="ghost"
-                  onClick={() => {
-                    setDepartmentFilter('');
-                    setEmploymentTypeFilter('');
-                    setJobTitleFilter('');
-                    setSearchQuery('');
-                  }}
+                  onClick={clearFilters}
                   className="text-gray-600 hover:text-gray-800"
                 >
                   Clear Filters
@@ -298,94 +498,111 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
       {/* Employee Table */}
       <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left">
-                  <Checkbox
-                    checked={selectAll}
-                    onCheckedChange={checked => handleSelectAll(checked === true)}
-                  />
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Name
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Hire Date
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Job Title
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Employment Type
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  <span className="sr-only">Actions</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filtered.map(employee => (
-                <tr key={employee.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4">
-                    <Checkbox
-                      checked={selectedEmployees.includes(employee.id)}
-                      onCheckedChange={checked =>
-                        handleSelectEmployee(employee.id, checked === true)
-                      }
-                    />
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <Avatar
-                        name={`${employee.firstName} ${employee.lastName}`}
-                        imageUrl={
-                          employee.profilePhoto ||
-                          getAvatarUrl(employee.firstName, employee.lastName)
-                        }
-                        size="sm"
-                      />
-                      <div>
-                        <div className="font-medium text-gray-900">{employee.firstName}</div>
-                        <div className="text-sm text-gray-500">{employee.email}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">
-                    {formatDate(employee.hireDate)}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{employee.jobTitle}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{employee.contractType}</td>
-                  <td className="px-6 py-4">
-                    <ActionDropdown
-                      employee={employee}
-                      onView={handleView}
-                      onEdit={handleEdit}
-                      onDelete={handleDelete}
-                    />
-                  </td>
-                </tr>
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id} className="bg-gray-50">
+                  {headerGroup.headers.map((header) => (
+                    <TableHead
+                      key={header.id}
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      {header.isPlaceholder ? null : (
+                        <div
+                          className={
+                            header.column.getCanSort()
+                              ? 'cursor-pointer select-none flex items-center gap-2'
+                              : ''
+                          }
+                          onClick={header.column.getToggleSortingHandler()}
+                        >
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                          {header.column.getCanSort() && (
+                            <ArrowUpDown size={14} className="opacity-50" />
+                          )}
+                        </div>
+                      )}
+                    </TableHead>
+                  ))}
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows.length > 0 ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow key={row.id} className="hover:bg-gray-50">
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id} className="px-6 py-4">
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={columns.length} className="text-center py-12">
+                    <div className="text-gray-400 mb-2">
+                      <Users size={48} className="mx-auto" />
+                    </div>
+                    <h3 className="text-lg font-medium text-gray-900 mb-1">No employees found</h3>
+                    <p className="text-gray-500">Try adjusting your search or filter criteria.</p>
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
         </div>
-
-        {filtered.length === 0 && (
-          <div className="text-center py-12">
-            <div className="text-gray-400 mb-2">
-              <Users size={48} className="mx-auto" />
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-1">No employees found</h3>
-            <p className="text-gray-500">Try adjusting your search or filter criteria.</p>
-          </div>
-        )}
       </div>
+
+      {/* Pagination Controls */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <p className="text-sm text-gray-700">
+            Showing {table.getState().pagination.pageIndex * EMPLOYEES_PER_PAGE + 1} to{' '}
+            {Math.min(
+              (table.getState().pagination.pageIndex + 1) * EMPLOYEES_PER_PAGE,
+              table.getFilteredRowModel().rows.length
+            )}{' '}
+            of {table.getFilteredRowModel().rows.length} results
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Previous
+          </Button>
+          <span className="text-sm text-gray-700">
+            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+          </Button>
+        </div>
+      </div>
+
+      {/* Selection Info */}
+      {Object.keys(rowSelection).length > 0 && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <p className="text-sm text-blue-800">
+            {Object.keys(rowSelection).length} employee(s) selected
+          </p>
+        </div>
+      )}
 
       {/* Modals */}
       <ExportModal
         isOpen={showExportModal}
         onClose={() => setShowExportModal(false)}
-        employees={filtered}
+        employees={table.getFilteredRowModel().rows.map((row) => row.original)}
       />
 
       <ViewEmployeeModal
@@ -396,10 +613,46 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
 
       <EmployeeModal
         isOpen={showEmployeeModal}
-        onClose={() => setShowEmployeeModal(false)}
+        onClose={() => {
+          setShowEmployeeModal(false);
+          setSelectedEmployee(null);
+        }}
         employee={selectedEmployee}
         onSave={handleSaveEmployee}
       />
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Employee</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete{' '}
+              <span className="font-semibold">
+                {selectedEmployee?.firstName} {selectedEmployee?.lastName}
+              </span>
+              ?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DialogClose>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                if (selectedEmployee) {
+                  onDeleteEmployee(selectedEmployee.id);
+                }
+                setShowDeleteDialog(false);
+                setSelectedEmployee(null);
+              }}
+            >
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
