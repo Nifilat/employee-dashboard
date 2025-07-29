@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Sun, Moon } from 'lucide-react';
 import type { MenuItem } from '../../types';
 import { mainMenuItems, bottomMenuItems } from '../../constants/menuItems';
 import { useAuth } from '@/context/AuthContext';
@@ -45,6 +45,43 @@ const SidebarSettingLogout: React.FC<{
   );
 };
 
+// Dark mode toggle button
+const DarkModeToggle: React.FC<{ isCollapsed: boolean }> = ({ isCollapsed }) => {
+  const [isDark, setIsDark] = React.useState(() => {
+    if (typeof window !== 'undefined') {
+      return (
+        localStorage.getItem('theme') === 'dark' ||
+        (!localStorage.getItem('theme') &&
+          window.matchMedia('(prefers-color-scheme: dark)').matches)
+      );
+    }
+    return false;
+  });
+
+  React.useEffect(() => {
+    const root = window.document.documentElement;
+    if (isDark) {
+      root.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      root.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [isDark]);
+
+  return (
+    <button
+      onClick={() => setIsDark(d => !d)}
+      className="flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors text-gray-600 hover:bg-gray-50 w-full"
+      title={isCollapsed ? (isDark ? 'Light mode' : 'Dark mode') : ''}
+      aria-label="Toggle dark mode"
+    >
+      {isDark ? <Sun size={20} /> : <Moon size={20} />}
+      {!isCollapsed && <span className="text-sm">{isDark ? 'Light mode' : 'Dark mode'}</span>}
+    </button>
+  );
+};
+
 export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -52,7 +89,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
 
   return (
     <div
-      className={`fixed left-0 top-0 h-full bg-white border-r border-gray-200 flex flex-col z-40 transition-all duration-300 ${
+      className={`fixed left-0 top-0 h-full bg-sidebar border-r border-border flex flex-col z-40 transition-all duration-300 ${
         isCollapsed ? 'w-16' : 'w-64'
       }`}
     >
@@ -62,7 +99,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
           <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
             <span className="text-white font-bold text-sm">M</span>
           </div>
-          {!isCollapsed && <span className="font-semibold text-lg text-gray-900">MarcoHR</span>}
+          {!isCollapsed && <span className="font-semibold text-lg text-sidebar-foreground">MarcoHR</span>}
         </div>
         <button onClick={onToggle} className="p-1 rounded-lg hover:bg-gray-100 transition-colors">
           {isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
@@ -79,7 +116,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
               <div
                 key={item.id}
                 className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors ${
-                  isActive ? 'bg-purple-50 text-purple-700' : 'text-gray-600 hover:bg-gray-50'
+                  isActive ? 'bg-accent text-accent-foreground' : 'text-sidebar-foreground hover:bg-muted'
                 }`}
                 onClick={() => navigate(`/${item.id}`)}
                 title={isCollapsed ? item.label : ''}
@@ -123,6 +160,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
               </div>
             );
           })}
+          {/* Dark mode toggle */}
+          <DarkModeToggle isCollapsed={isCollapsed} />
         </div>
 
         {/* User Profile */}
@@ -148,10 +187,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 truncate">
+              <p className="text-sm font-medium text-sidebar-foreground truncate">
                 {user.displayName || user.email}
               </p>
-              <p className="text-xs text-gray-500 truncate">{user.email}</p>
+              <p className="text-xs text-muted-foreground truncate">{user.email}</p>
             </div>
           </div>
         )}
