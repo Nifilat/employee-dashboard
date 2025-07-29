@@ -2,25 +2,52 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/config/firebase';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import { AuthContext } from '@/constants/context';
+import type { AuthUser } from './types';
 
-interface AuthUser {
-  uid: string;
-  email: string;
-  role: string;
-  displayName?: string;
-  profilePhoto?: string;
-}
 
-const AuthContext = createContext<{ user: AuthUser | null; loading: boolean }>({
-  user: null,
-  loading: true,
-});
+
 
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const logout = async () => {
+    await auth.signOut();
+    setUser(null);
+  };
+
+  // Session timeout logic
+  React.useEffect(() => {
+    let timeoutId: NodeJS.Timeout | null = null;
+    const TIMEOUT_MINUTES = 30; // 30 minutes
+    const events = ['mousemove', 'keydown', 'mousedown', 'touchstart'];
+
+    function resetTimeout() {
+      if (timeoutId) clearTimeout(timeoutId);
+      if (user) {
+        timeoutId = setTimeout(
+          () => {
+            logout();
+          },
+          TIMEOUT_MINUTES * 60 * 1000
+        );
+      }
+    }
+
+    if (user) {
+      events.forEach(event => window.addEventListener(event, resetTimeout));
+      resetTimeout();
+    }
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+      events.forEach(event => window.removeEventListener(event, resetTimeout));
+    };
+    // Only rerun when user changes
+  }, [user]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async firebaseUser => {
@@ -58,5 +85,5 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => unsubscribe();
   }, []);
 
-  return <AuthContext.Provider value={{ user, loading }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ user, loading, logout }}>{children}</AuthContext.Provider>;
 };
