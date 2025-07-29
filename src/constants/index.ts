@@ -1,1 +1,2 @@
-export const statusTabs = ['All', 'Active', 'Onboarding', 'Off-boarding', 'Dismissed'];
+// Re-export from data constants
+export { STATUS_TABS as statusTabs } from './data';

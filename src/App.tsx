@@ -7,43 +7,14 @@ import { Dashboard } from './pages/Dashboard';
 import { PeoplePage } from './pages/PeoplePage';
 import { LoginPage } from './pages/LoginPage';
 import { ProtectedRoute } from './components/layout/MainLayout';
-import type { Employee } from './types';
-import { fetchEmployees, addEmployee, updateEmployee, deleteEmployee } from './services/api';
+import { useEmployees } from './hooks/api/useEmployees';
 import { AppSkeleton } from './components/layout/AppSkeleton';
 
 const App: React.FC = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [employees, setEmployees] = useState<Employee[]>([]);
   const { user } = useAuth();
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    setLoading(true);
-    const loadEmployees = async () => {
-      const data = await fetchEmployees();
-      setEmployees(data);
-      setLoading(false);
-    };
-    loadEmployees();
-  }, []);
-
-  const handleAddEmployee = async (newEmployee: Employee) => {
-    await addEmployee(newEmployee);
-    const updated = await fetchEmployees();
-    setEmployees(updated);
-  };
-
-  const handleUpdateEmployee = async (updatedEmployee: Employee) => {
-    await updateEmployee(updatedEmployee);
-    const updated = await fetchEmployees();
-    setEmployees(updated);
-  };
-
-  const handleDeleteEmployee = async (employeeId: string) => {
-    await deleteEmployee(employeeId);
-    const updated = await fetchEmployees();
-    setEmployees(updated);
-  };
+  const { employees, loading, handleAddEmployee, handleUpdateEmployee, handleDeleteEmployee } =
+    useEmployees();
 
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed);
