@@ -1,5 +1,5 @@
-import { createContext } from "react";
-import type { AuthUser } from "@/context/types";
+import { createContext } from 'react';
+import type { AuthUser } from '@/context/types';
 
 export const AuthContext = createContext<{
   user: AuthUser | null;

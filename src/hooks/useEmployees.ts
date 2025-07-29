@@ -9,7 +9,6 @@ export function useEmployees() {
   const addEmployee = async (employee: Omit<Employee, 'id'>) => {
     setLoading(true);
     try {
-      
       const newEmployee = {
         ...employee,
         id: Date.now().toString(),

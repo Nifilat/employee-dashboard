@@ -100,8 +100,6 @@ function removeUndefinedFields<T extends object>(obj: T): Partial<T> {
   return Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined)) as Partial<T>;
 }
 
-
-
 /**
  * Uploads a profile photo to Firebase Storage and returns the download URL.
  * @param file The file to upload.
