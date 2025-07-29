@@ -99,7 +99,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
           <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
             <span className="text-white font-bold text-sm">M</span>
           </div>
-          {!isCollapsed && <span className="font-semibold text-lg text-sidebar-foreground">MarcoHR</span>}
+          {!isCollapsed && (
+            <span className="font-semibold text-lg text-sidebar-foreground">MarcoHR</span>
+          )}
         </div>
         <button onClick={onToggle} className="p-1 rounded-lg hover:bg-gray-100 transition-colors">
           {isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
@@ -116,7 +118,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
               <div
                 key={item.id}
                 className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors ${
-                  isActive ? 'bg-accent text-accent-foreground' : 'text-sidebar-foreground hover:bg-muted'
+                  isActive
+                    ? 'bg-accent text-accent-foreground'
+                    : 'text-sidebar-foreground hover:bg-muted'
                 }`}
                 onClick={() => navigate(`/${item.id}`)}
                 title={isCollapsed ? item.label : ''}
