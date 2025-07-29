@@ -1,13 +1,11 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { STATUS_TABS } from '@/constants/data';
+import type { StatusTabsProps } from './types';
 
-interface StatusTabsProps {
-  statusFilter: string;
-  setStatusFilter: (status: string) => void;
-}
 
-export const StatusTabs: React.FC<StatusTabsProps> = ({ statusFilter, setStatusFilter }) => {
+
+const StatusTabs: React.FC<StatusTabsProps> = ({ statusFilter, setStatusFilter }) => {
   return (
     <div className="border-b border-gray-200 overflow-x-auto">
       <div className="flex gap-8 min-w-max">
@@ -29,3 +27,5 @@ export const StatusTabs: React.FC<StatusTabsProps> = ({ statusFilter, setStatusF
     </div>
   );
 };
+
+export default StatusTabs;

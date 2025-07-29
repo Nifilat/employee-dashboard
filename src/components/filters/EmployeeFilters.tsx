@@ -11,24 +11,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { getUniqueDepartments, getUniqueJobTitles } from '@/utils/formatting';
-import type { Employee } from '@/types';
+import type { EmployeeFiltersProps } from './types';
 
-interface EmployeeFiltersProps {
-  employees: Employee[];
-  globalFilter: string;
-  setGlobalFilter: (value: string) => void;
-  departmentFilter: string;
-  setDepartmentFilter: (value: string) => void;
-  employmentTypeFilter: string;
-  setEmploymentTypeFilter: (value: string) => void;
-  jobTitleFilter: string;
-  setJobTitleFilter: (value: string) => void;
-  showFilters: boolean;
-  setShowFilters: (show: boolean) => void;
-  onClearFilters: () => void;
-}
 
-export const EmployeeFilters: React.FC<EmployeeFiltersProps> = ({
+
+const EmployeeFilters: React.FC<EmployeeFiltersProps> = ({
   employees,
   globalFilter,
   setGlobalFilter,
@@ -153,3 +140,5 @@ export const EmployeeFilters: React.FC<EmployeeFiltersProps> = ({
     </div>
   );
 };
+
+export default EmployeeFilters;
