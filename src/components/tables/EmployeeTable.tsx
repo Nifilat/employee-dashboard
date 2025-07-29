@@ -7,40 +7,24 @@ import {
   getFilteredRowModel,
   flexRender,
   type ColumnDef,
-  type SortingState,
-  type ColumnFiltersState,
 } from '@tanstack/react-table';
 import { ArrowUpDown, Users } from 'lucide-react';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Button } from '@/components/ui/button';
 import {
+  Checkbox,
+  Button,
   Table,
   TableHeader,
   TableBody,
   TableRow,
   TableHead,
   TableCell,
-} from '@/components/ui/table';
+} from '@/components/ui';
 import { Avatar } from '@/components/common/Avatar';
 import { ActionsDropdown } from './ActionsDropdown';
 import { getAvatarUrl, formatDate } from '@/utils/formatting';
 import type { Employee } from '@/types';
-
-interface EmployeeTableProps {
-  employees: Employee[];
-  globalFilter: string;
-  sorting: SortingState;
-  setSorting: (sorting: SortingState) => void;
-  columnFilters: ColumnFiltersState;
-  setColumnFilters: (filters: ColumnFiltersState) => void;
-  rowSelection: Record<string, boolean>;
-  setRowSelection: (selection: Record<string, boolean>) => void;
-  onView: (employee: Employee) => void;
-  onEdit: (employee: Employee) => void;
-  onDelete: (employee: Employee) => void;
-}
-
-const EMPLOYEES_PER_PAGE = 5;
+import type { EmployeeTableProps } from './types';
+import { EMPLOYEES_PER_PAGE } from '@/constants/data';
 
 export const EmployeeTable: React.FC<EmployeeTableProps> = ({
   employees,
@@ -135,12 +119,14 @@ export const EmployeeTable: React.FC<EmployeeTableProps> = ({
           <div className="text-sm text-gray-900">{formatDate(row.original.hireDate)}</div>
         ),
         enableSorting: true,
+        enableGlobalFilter: false,
       },
       {
         accessorKey: 'jobTitle',
         header: 'Job Title',
         cell: ({ row }) => <div className="text-sm text-gray-900">{row.original.jobTitle}</div>,
         enableSorting: true,
+        enableGlobalFilter: false,
       },
       {
         accessorKey: 'contractType',

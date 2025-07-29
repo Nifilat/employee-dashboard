@@ -5,7 +5,6 @@ import type { Employee } from '../types';
 import { EmployeeModal, ViewEmployeeModal, ExportModal } from '@/components/modals';
 import { EmployeeTable } from '../components/tables/EmployeeTable';
 import { EmployeeFilters, StatusTabs } from '@/components/filters';
-import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -14,6 +13,7 @@ import {
   DialogTitle,
   DialogDescription,
   DialogClose,
+  Button,
 } from '@/components/ui';
 import type { PeoplePageProps } from './types';
 import { filteredEmployees } from '../utils';
@@ -84,20 +84,20 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-2 sm:px-0">
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Employees</h1>
-          <p className="text-gray-600 text-sm">
+          <h1 className="text-2xl font-semibold text-primary">Employees</h1>
+          <p className="text-primary text-sm">
             Manage and collaborate within your organization's teams
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-col gap-2 w-full sm:w-auto sm:flex-row">
           <Button
             variant="outline"
             onClick={() => setShowExportModal(true)}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 w-full sm:w-auto"
           >
             <Download size={16} />
             Export
@@ -107,7 +107,7 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
               setSelectedEmployee(null);
               setShowEmployeeModal(true);
             }}
-            className="bg-purple-600 hover:bg-purple-700 flex items-center gap-2"
+            className="bg-purple-600 hover:bg-purple-700 flex items-center gap-2 w-full sm:w-auto"
           >
             <Plus size={16} />
             Add member
@@ -119,8 +119,8 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
       <StatusTabs statusFilter={statusFilter} setStatusFilter={setStatusFilter} />
 
       {/* Sick Leave Banner */}
-      <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-        <h3 className="font-medium text-gray-900 mb-1">Sick Leave Policy</h3>
+      <div className="bg-gray-50 border border-border rounded-radius p-4">
+        <h3 className="font-medium text-primary mb-1">Sick Leave Policy</h3>
         <p className="text-sm text-gray-600">
           Employees can be enrolled in one sick policy. Make sure that your policy is compliant with
           your state rules.
@@ -162,7 +162,7 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
       <ExportModal
         isOpen={showExportModal}
         onClose={() => setShowExportModal(false)}
-        employees={employees}
+        employees={filtered}
       />
 
       <ViewEmployeeModal
