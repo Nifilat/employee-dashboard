@@ -1,17 +1,10 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { Plus, Download } from 'lucide-react';
 import { type SortingState, type ColumnFiltersState } from '@tanstack/react-table';
-import {
-  filteredEmployees as filterEmployeesUtil
-} from '../utils';
 import type { Employee } from '../types';
-import { statusTabs } from '../constants';
-import { EmployeeModal } from '../components/modals/EmployeeModal';
-import { ViewEmployeeModal } from '../components/modals/ViewEmployeeModal';
-import { ExportModal } from '../components/modals/ExportModal';
+import { EmployeeModal, ViewEmployeeModal, ExportModal } from '@/components/modals';
 import { EmployeeTable } from '../components/tables/EmployeeTable';
-import { EmployeeFilters } from '../components/filters/EmployeeFilters';
-import { StatusTabs } from '../components/filters/StatusTabs';
+import { EmployeeFilters, StatusTabs } from '@/components/filters';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -23,9 +16,7 @@ import {
   DialogClose,
 } from '@/components/ui';
 import type { PeoplePageProps } from './types';
-import type { EmployeeFilters } from '../types';
-import type { SortOption } from '../types';
-
+import { filteredEmployees } from '../utils';
 
 export const PeoplePage: React.FC<PeoplePageProps> = ({
   employees,
@@ -34,12 +25,11 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
   onDeleteEmployee,
 }) => {
   const [globalFilter, setGlobalFilter] = useState('');
-  const [searchQuery] = useState('');
+
   const [statusFilter, setStatusFilter] = useState('All');
-  const [departmentFilter, setDepartmentFilter] = useState('');
-  const [employmentTypeFilter, setEmploymentTypeFilter] = useState('');
-  const [jobTitleFilter, setJobTitleFilter] = useState('');
-  const [sortBy] = useState<SortOption>('date');
+  const [departmentFilter, setDepartmentFilter] = useState('all');
+  const [employmentTypeFilter, setEmploymentTypeFilter] = useState('all');
+  const [jobTitleFilter, setJobTitleFilter] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
@@ -50,17 +40,14 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
-
-  const filters: EmployeeFilters = {
-    searchQuery,
+  const filtered = filteredEmployees(employees, {
+    searchQuery: globalFilter,
     statusFilter,
     departmentFilter,
     employmentTypeFilter,
     jobTitleFilter,
-    sortBy,
-  };
-  const filtered = filterEmployeesUtil(employees, filters);
-
+    sortBy: 'date',
+  });
 
   const handleView = (employee: Employee) => {
     setSelectedEmployee(employee);
@@ -88,9 +75,10 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
   };
 
   const clearFilters = () => {
-    setDepartmentFilter('');
-    setEmploymentTypeFilter('');
-    setJobTitleFilter('');
+    setStatusFilter('All');
+    setDepartmentFilter('all');
+    setEmploymentTypeFilter('all');
+    setJobTitleFilter('all');
     setGlobalFilter('');
     setColumnFilters([]);
   };
@@ -174,7 +162,7 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
       <ExportModal
         isOpen={showExportModal}
         onClose={() => setShowExportModal(false)}
-        employees={filtered}
+        employees={employees}
       />
 
       <ViewEmployeeModal

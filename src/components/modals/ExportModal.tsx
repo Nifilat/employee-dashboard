@@ -9,7 +9,7 @@ interface ExportModalProps {
   employees: Employee[];
 }
 
-export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, employees }) => {
+const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, employees }) => {
   if (!isOpen) return null;
 
   return (
@@ -51,3 +51,5 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, emplo
     </div>
   );
 };
+
+export default ExportModal;

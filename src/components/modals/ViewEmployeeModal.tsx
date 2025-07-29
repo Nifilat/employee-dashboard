@@ -10,7 +10,7 @@ interface ViewEmployeeModalProps {
   employee: Employee | null;
 }
 
-export const ViewEmployeeModal: React.FC<ViewEmployeeModalProps> = ({
+const ViewEmployeeModal: React.FC<ViewEmployeeModalProps> = ({
   isOpen,
   onClose,
   employee,
@@ -105,3 +105,5 @@ export const ViewEmployeeModal: React.FC<ViewEmployeeModalProps> = ({
     </div>
   );
 };
+
+export default ViewEmployeeModal;

@@ -5,7 +5,7 @@ import { useEmployeeModal } from '@/hooks/useEmployeeModal';
 import { EmployeeForm } from '../forms/EmployeeForm';
 import type { EmployeeModalProps } from './types';
 
-export const EmployeeModal: React.FC<EmployeeModalProps> = ({
+const EmployeeModal: React.FC<EmployeeModalProps> = ({
   isOpen,
   onClose,
   employee,
@@ -46,3 +46,5 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({
     </div>
   );
 };
+
+export default EmployeeModal;

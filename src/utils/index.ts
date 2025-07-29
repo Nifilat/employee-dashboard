@@ -30,17 +30,17 @@ export const filteredEmployees = (employees: Employee[], filters: EmployeeFilter
   }
 
   // Department
-  if (departmentFilter) {
+  if (departmentFilter && departmentFilter !== 'all') {
     filtered = filtered.filter(emp => emp.department === departmentFilter);
   }
 
   // Employment type
-  if (employmentTypeFilter) {
+  if (employmentTypeFilter && employmentTypeFilter !== 'all') {
     filtered = filtered.filter(emp => emp.contractType === employmentTypeFilter);
   }
 
   // Job Title
-  if (jobTitleFilter) {
+  if (jobTitleFilter && jobTitleFilter !== 'all') {
     filtered = filtered.filter(emp => emp.jobTitle === jobTitleFilter);
   }
 
