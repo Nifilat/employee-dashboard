@@ -17,7 +17,7 @@ export const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
 
-  // If already logged in and authorized, redirect to /people
+  
   if (user && (user.role === 'admin' || user.role === 'hr')) {
     return <Navigate to="/people" replace />;
   }
@@ -36,7 +36,7 @@ export const LoginPage: React.FC = () => {
         setLoading(false);
         return;
       }
-      // No need for manual redirect, context will trigger rerender and redirect above
+
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message || 'Login failed');
@@ -49,7 +49,7 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-gray-50">
+    <div className="fixed inset-0 flex items-center justify-center">
       <Card className="w-full max-w-md mx-4 shadow-xl border-purple-200">
         <CardHeader>
           <CardTitle className="text-2xl text-purple-700 font-bold text-center">
@@ -59,7 +59,7 @@ export const LoginPage: React.FC = () => {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="email" className="block text-sm font-medium text-primary mb-1">
                 Email
               </label>
               <Input
@@ -73,7 +73,7 @@ export const LoginPage: React.FC = () => {
               />
             </div>
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="password" className="block text-sm font-medium text-primary mb-1">
                 Password
               </label>
               <Input
