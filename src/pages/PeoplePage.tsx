@@ -77,12 +77,12 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
   onDeleteEmployee,
 }) => {
   const [globalFilter, setGlobalFilter] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [departmentFilter, setDepartmentFilter] = useState('');
   const [employmentTypeFilter, setEmploymentTypeFilter] = useState('');
   const [jobTitleFilter, setJobTitleFilter] = useState('');
-  const [sortBy, setSortBy] = useState<SortOption>('date');
+  const [sortBy] = useState<SortOption>('date');
   const [showFilters, setShowFilters] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
@@ -117,7 +117,7 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-44">
         <DropdownMenuItem
-          onSelect={(e) => {
+          onSelect={e => {
             e.preventDefault();
             handleView(employee);
           }}
@@ -127,7 +127,7 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
           View Details
         </DropdownMenuItem>
         <DropdownMenuItem
-          onSelect={(e) => {
+          onSelect={e => {
             e.preventDefault();
             handleEdit(employee);
           }}
@@ -138,7 +138,7 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          onSelect={(e) => {
+          onSelect={e => {
             e.preventDefault();
             handleDelete(employee);
           }}
@@ -152,16 +152,16 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
   );
 
   // Custom global filter function
-  const globalFilterFn = (row: any, columnId: string, value: string) => {
+  const globalFilterFn = (row: any, _columnId: string, value: string) => {
     const employee = row.original as Employee;
     const searchValue = value.toLowerCase();
-    
+
     // Search in firstName, lastName, and email
     const firstName = (employee.firstName || '').toLowerCase();
     const lastName = (employee.lastName || '').toLowerCase();
     const email = (employee.email || '').toLowerCase();
     const fullName = `${firstName} ${lastName}`;
-    
+
     return (
       firstName.includes(searchValue) ||
       lastName.includes(searchValue) ||
@@ -178,14 +178,14 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
         header: ({ table }) => (
           <Checkbox
             checked={table.getIsAllPageRowsSelected()}
-            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+            onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
             aria-label="Select all"
           />
         ),
         cell: ({ row }) => (
           <Checkbox
             checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
+            onCheckedChange={value => row.toggleSelected(!!value)}
             aria-label="Select row"
           />
         ),
@@ -203,8 +203,7 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
               <Avatar
                 name={`${employee.firstName} ${employee.lastName}`}
                 imageUrl={
-                  employee.profilePhoto ||
-                  getAvatarUrl(employee.firstName, employee.lastName)
+                  employee.profilePhoto || getAvatarUrl(employee.firstName, employee.lastName)
                 }
                 size="sm"
               />
@@ -212,9 +211,7 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
                 <div className="font-medium text-gray-900">
                   {employee.firstName} {employee.lastName}
                 </div>
-                <div className="text-sm text-gray-500">
-                  {(employee.email || '').toLowerCase()}
-                </div>
+                <div className="text-sm text-gray-500">{(employee.email || '').toLowerCase()}</div>
               </div>
             </div>
           );
@@ -225,34 +222,28 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
           const nameB = `${rowB.original.firstName} ${rowB.original.lastName}`;
           return nameA.localeCompare(nameB);
         },
-        // Enable this column for global filtering and provide accessor for searching
+
         enableGlobalFilter: true,
-        accessorFn: (row) => `${row.firstName} ${row.lastName} ${row.email}`,
+        accessorFn: row => `${row.firstName} ${row.lastName} ${row.email}`,
       },
       {
         accessorKey: 'hireDate',
         header: 'Hire Date',
         cell: ({ row }) => (
-          <div className="text-sm text-gray-900">
-            {formatDate(row.original.hireDate)}
-          </div>
+          <div className="text-sm text-gray-900">{formatDate(row.original.hireDate)}</div>
         ),
         enableSorting: true,
       },
       {
         accessorKey: 'jobTitle',
         header: 'Job Title',
-        cell: ({ row }) => (
-          <div className="text-sm text-gray-900">{row.original.jobTitle}</div>
-        ),
+        cell: ({ row }) => <div className="text-sm text-gray-900">{row.original.jobTitle}</div>,
         enableSorting: true,
       },
       {
         accessorKey: 'contractType',
         header: 'Employment Type',
-        cell: ({ row }) => (
-          <div className="text-sm text-gray-900">{row.original.contractType}</div>
-        ),
+        cell: ({ row }) => <div className="text-sm text-gray-900">{row.original.contractType}</div>,
         enableSorting: true,
         enableGlobalFilter: false,
       },
@@ -362,7 +353,7 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
       {/* Status Tabs */}
       <div className="border-b border-gray-200 overflow-x-auto">
         <div className="flex gap-8 min-w-max">
-          {statusTabs.map((status) => (
+          {statusTabs.map(status => (
             <Button
               key={status}
               variant="ghost"
@@ -401,7 +392,7 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
               type="text"
               placeholder="Search employees..."
               value={globalFilter ?? ''}
-              onChange={(e) => setGlobalFilter(e.target.value)}
+              onChange={e => setGlobalFilter(e.target.value)}
               className="pl-10"
             />
           </div>
@@ -425,14 +416,14 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
                 <Label htmlFor="department-filter">Department</Label>
                 <Select
                   value={departmentFilter || undefined}
-                  onValueChange={(value) => setDepartmentFilter(value || '')}
+                  onValueChange={value => setDepartmentFilter(value || '')}
                 >
                   <SelectTrigger id="department-filter">
                     <SelectValue placeholder="All Departments" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Departments</SelectItem>
-                    {uniqueDepartments.map((dept) => (
+                    {uniqueDepartments.map(dept => (
                       <SelectItem key={dept} value={dept}>
                         {dept}
                       </SelectItem>
@@ -445,7 +436,7 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
                 <Label htmlFor="employment-type-filter">Employment Type</Label>
                 <Select
                   value={employmentTypeFilter || undefined}
-                  onValueChange={(value) =>
+                  onValueChange={value =>
                     setEmploymentTypeFilter(value === 'all' ? '' : value || '')
                   }
                 >
@@ -465,14 +456,14 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
                 <Label htmlFor="job-title-filter">Job Title</Label>
                 <Select
                   value={jobTitleFilter || undefined}
-                  onValueChange={(value) => setJobTitleFilter(value === 'all' ? '' : value || '')}
+                  onValueChange={value => setJobTitleFilter(value === 'all' ? '' : value || '')}
                 >
                   <SelectTrigger id="job-title-filter">
                     <SelectValue placeholder="All Titles" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Titles</SelectItem>
-                    {uniqueJobTitles.map((title) => (
+                    {uniqueJobTitles.map(title => (
                       <SelectItem key={title} value={title}>
                         {title}
                       </SelectItem>
@@ -500,9 +491,9 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
+              {table.getHeaderGroups().map(headerGroup => (
                 <TableRow key={headerGroup.id} className="bg-gray-50">
-                  {headerGroup.headers.map((header) => (
+                  {headerGroup.headers.map(header => (
                     <TableHead
                       key={header.id}
                       className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -529,9 +520,9 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
             </TableHeader>
             <TableBody>
               {table.getRowModel().rows.length > 0 ? (
-                table.getRowModel().rows.map((row) => (
+                table.getRowModel().rows.map(row => (
                   <TableRow key={row.id} className="hover:bg-gray-50">
-                    {row.getVisibleCells().map((cell) => (
+                    {row.getVisibleCells().map(cell => (
                       <TableCell key={cell.id} className="px-6 py-4">
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </TableCell>
@@ -602,7 +593,7 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
       <ExportModal
         isOpen={showExportModal}
         onClose={() => setShowExportModal(false)}
-        employees={table.getFilteredRowModel().rows.map((row) => row.original)}
+        employees={table.getFilteredRowModel().rows.map(row => row.original)}
       />
 
       <ViewEmployeeModal
