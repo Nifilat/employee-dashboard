@@ -5,7 +5,6 @@ import { DepartmentDistributionChart } from '../components/charts/DepartmentDist
 import type { DashboardProps } from './types';
 
 export const Dashboard: React.FC<DashboardProps> = ({ employees }) => {
-
   return (
     <div className="space-y-6">
       <StatsCards employees={employees} />

@@ -10,10 +10,45 @@ interface SidebarProps {
   onToggle: () => void;
 }
 
+// Helper component for Settings + Logout
+const SidebarSettingLogout: React.FC<{
+  isCollapsed: boolean;
+  IconComponent: React.ElementType;
+  label: string;
+  onLogout: () => void;
+}> = ({ isCollapsed, IconComponent, label, onLogout }) => {
+  const [showMenu, setShowMenu] = React.useState(false);
+  return (
+    <div className="relative">
+      <div
+        className="flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors text-gray-600 hover:bg-gray-50"
+        title={isCollapsed ? label : ''}
+        onClick={() => setShowMenu(v => !v)}
+      >
+        <IconComponent size={20} />
+        {!isCollapsed && <span className="text-sm">{label}</span>}
+      </div>
+      {showMenu && !isCollapsed && (
+        <div className="absolute left-full top-0 ml-2 bg-white border border-gray-200 rounded shadow-lg z-50 min-w-[120px]">
+          <button
+            onClick={() => {
+              setShowMenu(false);
+              onLogout();
+            }}
+            className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+          >
+            Logout
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
 export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   return (
     <div
@@ -62,6 +97,21 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
         <div className="space-y-1 border-t border-gray-100 pt-4">
           {bottomMenuItems.map(item => {
             const IconComponent = item.icon;
+            if (item.id === 'setting') {
+              // Settings item: show logout menu on click
+              return (
+                <SidebarSettingLogout
+                  key={item.id}
+                  isCollapsed={isCollapsed}
+                  IconComponent={IconComponent}
+                  label={item.label}
+                  onLogout={async () => {
+                    await logout();
+                    navigate('/login');
+                  }}
+                />
+              );
+            }
             return (
               <div
                 key={item.id}
