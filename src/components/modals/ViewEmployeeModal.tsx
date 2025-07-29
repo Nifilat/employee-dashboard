@@ -10,11 +10,7 @@ interface ViewEmployeeModalProps {
   employee: Employee | null;
 }
 
-const ViewEmployeeModal: React.FC<ViewEmployeeModalProps> = ({
-  isOpen,
-  onClose,
-  employee,
-}) => {
+const ViewEmployeeModal: React.FC<ViewEmployeeModalProps> = ({ isOpen, onClose, employee }) => {
   if (!isOpen || !employee) return null;
 
   return (

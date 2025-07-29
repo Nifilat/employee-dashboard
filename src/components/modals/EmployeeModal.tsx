@@ -5,12 +5,7 @@ import { useEmployeeModal } from '@/hooks/useEmployeeModal';
 import { EmployeeForm } from '../forms/EmployeeForm';
 import type { EmployeeModalProps } from './types';
 
-const EmployeeModal: React.FC<EmployeeModalProps> = ({
-  isOpen,
-  onClose,
-  employee,
-  onSave,
-}) => {
+const EmployeeModal: React.FC<EmployeeModalProps> = ({ isOpen, onClose, employee, onSave }) => {
   const { formData, loading, handleSubmit, updateField, handleFileChange } = useEmployeeModal({
     employee,
     onSave,
