@@ -1,4 +1,4 @@
-import React, { useState} from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { FileText } from 'lucide-react';
 import { useAuth } from './context/AuthContext';
@@ -20,17 +20,26 @@ const App: React.FC = () => {
     setSidebarCollapsed(!sidebarCollapsed);
   };
 
+  const shouldShowSidebar = user && (user.role === 'admin' || user.role === 'hr');
+
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen flex items-stretch">
         {/* Sidebar: Only show if user is logged in and is admin/hr */}
-        {user && (user.role === 'admin' || user.role === 'hr') && (
-          <Sidebar isCollapsed={sidebarCollapsed} onToggle={toggleSidebar} />
-        )}
+        {shouldShowSidebar && <Sidebar isCollapsed={sidebarCollapsed} onToggle={toggleSidebar} />}
 
         {/* Main Content */}
-        <div className={`transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
-          <div className="p-4 lg:p-8">
+        <div
+          className={`
+            transition-all duration-300 flex-grow w-full overflow-auto
+            
+          `}
+        >
+          {shouldShowSidebar && !sidebarCollapsed && (
+            <div className="md:hidden fixed inset-0 bg-black/20 backdrop-blur-lg z-10 pointer-events-none" />
+          )}
+
+          <div className="p-4 lg:p-8 relative z-20 w-full overflow-auto">
             {loading ? (
               <AppSkeleton />
             ) : (
