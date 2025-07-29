@@ -4,7 +4,6 @@ A fully type-safe and modular employee management system designed for HR teams a
 
 ---
 
-
 ## ✅ Project Summary
 
 This project allows **Admins/HR Managers** to:
