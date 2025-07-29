@@ -4,6 +4,7 @@ A fully type-safe and modular employee management system designed for HR teams a
 
 ---
 
+
 ## ✅ Project Summary
 
 This project allows **Admins/HR Managers** to:
@@ -101,3 +102,11 @@ cd employee-management-dashboard
 npm install
 npm run dev
 ```
+
+## 🔑 Login Details
+
+To test the application, use the following credentials:
+
+- **Live Link:** https://employee-dashboard-flax.vercel.app/
+- **Email:** rebeca_mckenzie@example.net
+- **Password:** h9NRvtuWqDcPd5j
