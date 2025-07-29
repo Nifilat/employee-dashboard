@@ -84,10 +84,10 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
   };
 
   return (
-    <div className="space-y-6 px-2 sm:px-0">
+    <div className="space-y-6 px-2 sm:px-0 w-full overflow-auto">
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
-        <div>
+        <div className="md:pl-0 pl-10">
           <h1 className="text-2xl font-semibold text-primary">Employees</h1>
           <p className="text-primary text-sm">
             Manage and collaborate within your organization's teams
@@ -119,9 +119,9 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
       <StatusTabs statusFilter={statusFilter} setStatusFilter={setStatusFilter} />
 
       {/* Sick Leave Banner */}
-      <div className="bg-gray-50 border border-border rounded-radius p-4">
+      <div className=" border border-ring rounded-lg p-4">
         <h3 className="font-medium text-primary mb-1">Sick Leave Policy</h3>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-foreground">
           Employees can be enrolled in one sick policy. Make sure that your policy is compliant with
           your state rules.
         </p>

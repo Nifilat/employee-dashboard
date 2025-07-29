@@ -1,4 +1,3 @@
-// components/EmploymentInformationSection.tsx
 import React from 'react';
 import type { ChangeEvent } from 'react';
 import { Department, ContractType, EmploymentStatus } from '../../../types';
@@ -10,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
   Label,
+  DatePicker,
 } from '@/components/ui';
 import type { EmploymentInformationSectionProps } from './types';
 import type { EmployeeFormData } from '@/components/modals/types';
@@ -96,14 +96,10 @@ export const EmploymentInformationSection: React.FC<EmploymentInformationSection
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="hireDate">Hire Date *</Label>
-          <Input
-            id="hireDate"
-            type="date"
-            required
-            value={formData.hireDate}
-            onChange={handleInputChange('hireDate')}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+          <DatePicker
+            label="Hire Date *"
+            value={new Date(formData.hireDate)}
+            onChange={value => onFieldChange('hireDate', value?.toISOString() || '')}
           />
         </div>
 

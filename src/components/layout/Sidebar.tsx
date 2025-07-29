@@ -1,46 +1,25 @@
 import React from 'react';
-import { ChevronLeft, ChevronRight, Sun, Moon } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Sun, Moon, LogOutIcon } from 'lucide-react';
 import type { MenuItem } from '../../types';
 import { mainMenuItems, bottomMenuItems } from '../../constants/menuItems';
 import { useAuth } from '@/context/AuthContext';
 import { useLocation, useNavigate } from 'react-router-dom';
+import type { SidebarProps } from './types';
 
-interface SidebarProps {
-  isCollapsed: boolean;
-  onToggle: () => void;
-}
-
-// Helper component for Settings + Logout
 const SidebarSettingLogout: React.FC<{
   isCollapsed: boolean;
   IconComponent: React.ElementType;
   label: string;
-  onLogout: () => void;
-}> = ({ isCollapsed, IconComponent, label, onLogout }) => {
-  const [showMenu, setShowMenu] = React.useState(false);
+}> = ({ isCollapsed, IconComponent, label }) => {
   return (
     <div className="relative">
       <div
         className="flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors text-gray-600 hover:bg-gray-50"
         title={isCollapsed ? label : ''}
-        onClick={() => setShowMenu(v => !v)}
       >
         <IconComponent size={20} />
         {!isCollapsed && <span className="text-sm">{label}</span>}
       </div>
-      {showMenu && !isCollapsed && (
-        <div className="absolute left-full top-0 ml-2 bg-white border border-gray-200 rounded shadow-lg z-50 min-w-[120px]">
-          <button
-            onClick={() => {
-              setShowMenu(false);
-              onLogout();
-            }}
-            className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
-          >
-            Logout
-          </button>
-        </div>
-      )}
     </div>
   );
 };
@@ -89,23 +68,28 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
 
   return (
     <div
-      className={`fixed left-0 top-0 h-full bg-sidebar border-r border-border flex flex-col z-40 transition-all duration-300 ${
-        isCollapsed ? 'w-16' : 'w-64'
+      className={`md:sticky fixed left-0 top-0 h-screen bg-sidebar border-r border-border flex flex-col z-40 transition-all duration-300 pt-4 ${
+        isCollapsed ? 'w-16 -translate-x-full md:-translate-x-0' : 'w-64 translate-x-0'
       }`}
     >
       {/* Logo and Toggle */}
-      <div className="flex items-center justify-between p-6 border-b border-gray-100">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">M</span>
-          </div>
-          {!isCollapsed && (
-            <span className="font-semibold text-lg text-sidebar-foreground">MarcoHR</span>
-          )}
-        </div>
-        <button onClick={onToggle} className="p-1 rounded-lg hover:bg-gray-100 transition-colors">
+      <div className="flex flex-col gap-4 px-4">
+        <button
+          onClick={onToggle}
+          className={`absolute md:static left-full top-5 md:p-1 p-4 rounded-lg w-fit bg-muted transition-colors ${!isCollapsed ? '-translate-x-full md:translate-x-0' : ''}`}
+        >
           {isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
         </button>
+        <div className="flex items-center justify-between  border-b border-gray-300 pb-3">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">M</span>
+            </div>
+            {!isCollapsed && (
+              <span className="font-semibold text-lg text-sidebar-foreground">MarcoHR</span>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Navigation */}
@@ -135,21 +119,28 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
 
       {/* Bottom Section */}
       <div className="px-3 pb-4 space-y-4">
-        <div className="space-y-1 border-t border-gray-100 pt-4">
+        <div className="space-y-1 border-t border-gray-300 pt-4">
+          <button
+            onClick={async () => {
+              await logout();
+              navigate('/login');
+            }}
+            className="flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors text-gray-600 hover:bg-gray-50 w-full"
+            title={isCollapsed ? 'Logout' : ''}
+          >
+            <LogOutIcon size={20} />
+            {!isCollapsed && <span className="text-sm">{'Logout'}</span>}
+          </button>
+
           {bottomMenuItems.map(item => {
             const IconComponent = item.icon;
             if (item.id === 'setting') {
-              // Settings item: show logout menu on click
               return (
                 <SidebarSettingLogout
                   key={item.id}
                   isCollapsed={isCollapsed}
                   IconComponent={IconComponent}
                   label={item.label}
-                  onLogout={async () => {
-                    await logout();
-                    navigate('/login');
-                  }}
                 />
               );
             }

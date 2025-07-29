@@ -59,7 +59,7 @@ export const EmployeeGrowthChart: React.FC<EmployeeGrowthChartProps> = ({ employ
   return (
     <div className="mb-6">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-gray-900">Employee Growth - {selectedYear}</h2>
+        <h2 className="text-lg font-semibold text-primary">Employee Growth - {selectedYear}</h2>
         <select
           value={selectedYear}
           onChange={e => setSelectedYear(Number(e.target.value))}

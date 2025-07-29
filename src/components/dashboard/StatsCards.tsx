@@ -22,7 +22,7 @@ export const StatsCards: React.FC<StatsCardsProps> = ({ employees = [] }) => {
                 <p className="text-2xl font-bold">0</p>
                 <p className="text-xs text-muted-foreground mt-1">No employees yet</p>
               </div>
-              <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12  rounded-lg flex items-center justify-center">
                 <Users className="w-6 h-6 text-gray-400" />
               </div>
             </div>
@@ -52,7 +52,7 @@ export const StatsCards: React.FC<StatsCardsProps> = ({ employees = [] }) => {
                 <p className="text-2xl font-bold">0</p>
                 <p className="text-xs text-muted-foreground mt-1">No employees</p>
               </div>
-              <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 rounded-lg flex items-center justify-center">
                 <AlertCircle className="w-6 h-6 text-gray-400" />
               </div>
             </div>
@@ -309,11 +309,13 @@ export const StatsCards: React.FC<StatsCardsProps> = ({ employees = [] }) => {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {newlyHired.length > 0 && (
-                <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-                  <h4 className="font-medium text-green-900 mb-2">Recently Hired</h4>
+                <div className="p-4 bg-green-50 dark:bg-green-50/10 rounded-lg border border-green-200">
+                  <h4 className="font-medium text-green-900 dark:text-green-200 mb-2">
+                    Recently Hired
+                  </h4>
                   <div className="space-y-1">
                     {newlyHired.slice(0, 3).map(emp => (
-                      <div key={emp.id} className="text-sm text-green-700">
+                      <div key={emp.id} className="text-sm text-green-700 dark:text-green-200/70">
                         {emp.firstName} {emp.lastName} - {emp.jobTitle}
                       </div>
                     ))}
@@ -325,11 +327,13 @@ export const StatsCards: React.FC<StatsCardsProps> = ({ employees = [] }) => {
               )}
 
               {onProbation.length > 0 && (
-                <div className="p-4 bg-orange-50 rounded-lg border border-orange-200">
-                  <h4 className="font-medium text-orange-900 mb-2">On Probation</h4>
+                <div className="p-4 bg-orange-50 dark:bg-orange-50/10 rounded-lg border border-orange-200">
+                  <h4 className="font-medium text-orange-900 dark:text-orange-200 mb-2">
+                    On Probation
+                  </h4>
                   <div className="space-y-1">
                     {onProbation.slice(0, 3).map(emp => (
-                      <div key={emp.id} className="text-sm text-orange-700">
+                      <div key={emp.id} className="text-sm text-orange-700 dark:text-orange-200/70">
                         {emp.firstName} {emp.lastName} - {emp.jobTitle}
                       </div>
                     ))}

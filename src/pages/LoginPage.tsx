@@ -17,7 +17,6 @@ export const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
 
-  
   if (user && (user.role === 'admin' || user.role === 'hr')) {
     return <Navigate to="/people" replace />;
   }
@@ -36,7 +35,6 @@ export const LoginPage: React.FC = () => {
         setLoading(false);
         return;
       }
-
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message || 'Login failed');

@@ -1,7 +1,7 @@
 import { Skeleton } from '../ui/skeleton';
 
 export const AppSkeleton: React.FC = () => (
-  <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
+  <div className="min-h-screen flex flex-col items-center justify-center">
     <div className="w-full max-w-3xl space-y-6">
       {[...Array(6)].map((_, i) => (
         <div key={i} className="bg-white rounded-lg shadow p-6 flex items-center space-x-4">

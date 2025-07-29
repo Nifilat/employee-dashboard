@@ -20,7 +20,7 @@ export const exportToCSV = (data: Employee[]) => {
       emp.department,
       emp.contractType,
       emp.status,
-      emp.hireDate,
+      new Date(emp.hireDate).toDateString(),
     ]),
   ]
     .map(row => row.join(','))

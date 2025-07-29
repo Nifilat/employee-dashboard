@@ -95,10 +95,10 @@ export const EmployeeTable: React.FC<EmployeeTableProps> = ({
                 size="sm"
               />
               <div>
-                <div className="font-medium text-gray-900">
+                <div className="font-medium text-primary">
                   {employee.firstName} {employee.lastName}
                 </div>
-                <div className="text-sm text-gray-500">{(employee.email || '').toLowerCase()}</div>
+                <div className="text-sm text-primary">{(employee.email || '').toLowerCase()}</div>
               </div>
             </div>
           );
@@ -116,7 +116,7 @@ export const EmployeeTable: React.FC<EmployeeTableProps> = ({
         accessorKey: 'hireDate',
         header: 'Hire Date',
         cell: ({ row }) => (
-          <div className="text-sm text-gray-900">{formatDate(row.original.hireDate)}</div>
+          <div className="text-sm text-primary">{formatDate(row.original.hireDate)}</div>
         ),
         enableSorting: true,
         enableGlobalFilter: false,
@@ -124,14 +124,14 @@ export const EmployeeTable: React.FC<EmployeeTableProps> = ({
       {
         accessorKey: 'jobTitle',
         header: 'Job Title',
-        cell: ({ row }) => <div className="text-sm text-gray-900">{row.original.jobTitle}</div>,
+        cell: ({ row }) => <div className="text-sm text-primary">{row.original.jobTitle}</div>,
         enableSorting: true,
         enableGlobalFilter: false,
       },
       {
         accessorKey: 'contractType',
         header: 'Employment Type',
-        cell: ({ row }) => <div className="text-sm text-gray-900">{row.original.contractType}</div>,
+        cell: ({ row }) => <div className="text-sm text-primary">{row.original.contractType}</div>,
         enableSorting: true,
         enableGlobalFilter: false,
       },
@@ -180,18 +180,18 @@ export const EmployeeTable: React.FC<EmployeeTableProps> = ({
   });
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 w-full overflow-auto">
       {/* Employee Table */}
-      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+      <div className=" border border-ring rounded-lg overflow-hidden min-w-[500px]">
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               {table.getHeaderGroups().map(headerGroup => (
-                <TableRow key={headerGroup.id} className="bg-gray-50">
+                <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map(header => (
                     <TableHead
                       key={header.id}
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      className="px-6 py-3 text-left text-xs font-medium text-primary uppercase tracking-wider"
                     >
                       {header.isPlaceholder ? null : (
                         <div
@@ -216,7 +216,7 @@ export const EmployeeTable: React.FC<EmployeeTableProps> = ({
             <TableBody>
               {table.getRowModel().rows.length > 0 ? (
                 table.getRowModel().rows.map(row => (
-                  <TableRow key={row.id} className="hover:bg-gray-50">
+                  <TableRow key={row.id} className="hover:bg-muted">
                     {row.getVisibleCells().map(cell => (
                       <TableCell key={cell.id} className="px-6 py-4">
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -227,11 +227,11 @@ export const EmployeeTable: React.FC<EmployeeTableProps> = ({
               ) : (
                 <TableRow>
                   <TableCell colSpan={columns.length} className="text-center py-12">
-                    <div className="text-gray-400 mb-2">
+                    <div className="text-primary/80 mb-2">
                       <Users size={48} className="mx-auto" />
                     </div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-1">No employees found</h3>
-                    <p className="text-gray-500">Try adjusting your search or filter criteria.</p>
+                    <h3 className="text-lg font-medium text-primary mb-1">No employees found</h3>
+                    <p className="text-primary/85">Try adjusting your search or filter criteria.</p>
                   </TableCell>
                 </TableRow>
               )}
@@ -241,9 +241,9 @@ export const EmployeeTable: React.FC<EmployeeTableProps> = ({
       </div>
 
       {/* Pagination Controls */}
-      <div className="flex items-center justify-between">
+      <div className="flex md:items-center justify-between flex-col md:flex-row gap-2 items-stretch">
         <div className="flex items-center gap-2">
-          <p className="text-sm text-gray-700">
+          <p className="text-sm text-primary/75">
             Showing {table.getState().pagination.pageIndex * EMPLOYEES_PER_PAGE + 1} to{' '}
             {Math.min(
               (table.getState().pagination.pageIndex + 1) * EMPLOYEES_PER_PAGE,
@@ -252,7 +252,7 @@ export const EmployeeTable: React.FC<EmployeeTableProps> = ({
             of {table.getFilteredRowModel().rows.length} results
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 justify-between md:justify-start">
           <Button
             variant="outline"
             size="sm"
@@ -261,7 +261,7 @@ export const EmployeeTable: React.FC<EmployeeTableProps> = ({
           >
             Previous
           </Button>
-          <span className="text-sm text-gray-700">
+          <span className="text-sm text-primary/80">
             Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
           </span>
           <Button

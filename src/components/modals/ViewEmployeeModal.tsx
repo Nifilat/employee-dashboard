@@ -14,12 +14,12 @@ const ViewEmployeeModal: React.FC<ViewEmployeeModalProps> = ({ isOpen, onClose, 
   if (!isOpen || !employee) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-md">
-      <div className="bg-white rounded-lg max-w-md w-full">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-md bg-black/10">
+      <div className="bg-card rounded-lg max-w-md w-full">
         <div className="p-6">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold text-gray-900">Employee Details</h2>
-            <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+            <h2 className="text-xl font-semibold text-primary/85">Employee Details</h2>
+            <button onClick={onClose} className="text-primary/75 hover:text-primary/80">
               <X size={24} />
             </button>
           </div>
@@ -34,31 +34,31 @@ const ViewEmployeeModal: React.FC<ViewEmployeeModalProps> = ({ isOpen, onClose, 
                 size="lg"
               />
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">
+                <h3 className="text-lg font-semibold text-primary/85">
                   {employee.firstName} {employee.lastName}
                 </h3>
-                <p className="text-gray-600">{employee.jobTitle}</p>
+                <p className="text-primary/80">{employee.jobTitle}</p>
               </div>
             </div>
 
             <div className="space-y-3">
               <div>
-                <label className="block text-sm font-medium text-gray-500">Email</label>
-                <p className="text-gray-900">{employee.email}</p>
+                <label className="block text-sm font-medium text-primary/78">Email</label>
+                <p className="text-primary/85">{employee.email}</p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-500">Department</label>
-                <p className="text-gray-900">{employee.department}</p>
+                <label className="block text-sm font-medium text-primary/78">Department</label>
+                <p className="text-primary/85">{employee.department}</p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-500">Employment Type</label>
-                <p className="text-gray-900">{employee.contractType}</p>
+                <label className="block text-sm font-medium text-primary/78">Employment Type</label>
+                <p className="text-primary/85">{employee.contractType}</p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-500">Status</label>
+                <label className="block text-sm font-medium text-primary/78">Status</label>
                 <span
                   className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
                     employee.status === 'Active'
@@ -75,14 +75,14 @@ const ViewEmployeeModal: React.FC<ViewEmployeeModalProps> = ({ isOpen, onClose, 
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-500">Hire Date</label>
-                <p className="text-gray-900">{formatDate(employee.hireDate)}</p>
+                <label className="block text-sm font-medium text-primary/78">Hire Date</label>
+                <p className="text-primary/85">{formatDate(employee.hireDate)}</p>
               </div>
 
               {employee.salary && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">Salary</label>
-                  <p className="text-gray-900">${employee.salary.toLocaleString()}</p>
+                  <label className="block text-sm font-medium text-primary/78">Salary</label>
+                  <p className="text-primary/85">${employee.salary.toLocaleString()}</p>
                 </div>
               )}
             </div>

@@ -10,12 +10,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ employees }) => {
       <StatsCards employees={employees} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white p-6 rounded-lg border border-gray-200">
+        <div className=" p-6 rounded-lg border border-ring">
           <EmployeeGrowthChart employees={employees} />
         </div>
 
-        <div className="bg-white p-6 rounded-lg border border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Department Distribution</h3>
+        <div className=" p-6 rounded-lg border border-ring">
+          <h3 className="text-lg font-semibold text-primary mb-4">Department Distribution</h3>
           <DepartmentDistributionChart employees={employees} />
         </div>
       </div>

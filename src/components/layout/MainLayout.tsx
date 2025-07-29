@@ -7,7 +7,6 @@ export const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ childr
   const location = useLocation();
 
   if (loading) {
-    // Optionally show a spinner or nothing while loading
     return null;
   }
 
