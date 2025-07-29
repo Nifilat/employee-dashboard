@@ -13,8 +13,6 @@ import {
 import { getUniqueDepartments, getUniqueJobTitles } from '@/utils/formatting';
 import type { EmployeeFiltersProps } from './types';
 
-
-
 const EmployeeFilters: React.FC<EmployeeFiltersProps> = ({
   employees,
   globalFilter,
@@ -89,9 +87,7 @@ const EmployeeFilters: React.FC<EmployeeFiltersProps> = ({
               <Label htmlFor="employment-type-filter">Employment Type</Label>
               <Select
                 value={employmentTypeFilter || undefined}
-                onValueChange={value =>
-                  setEmploymentTypeFilter(value === 'all' ? '' : value || '')
-                }
+                onValueChange={value => setEmploymentTypeFilter(value === 'all' ? '' : value || '')}
               >
                 <SelectTrigger id="employment-type-filter">
                   <SelectValue placeholder="All Types" />

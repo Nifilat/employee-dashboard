@@ -3,8 +3,6 @@ import { Button } from '@/components/ui/button';
 import { STATUS_TABS } from '@/constants/data';
 import type { StatusTabsProps } from './types';
 
-
-
 const StatusTabs: React.FC<StatusTabsProps> = ({ statusFilter, setStatusFilter }) => {
   return (
     <div className="border-b border-gray-200 overflow-x-auto">

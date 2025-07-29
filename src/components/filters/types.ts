@@ -1,4 +1,4 @@
-import type { Employee } from "@/types";
+import type { Employee } from '@/types';
 export interface EmployeeFiltersProps {
   employees: Employee[];
   globalFilter: string;
