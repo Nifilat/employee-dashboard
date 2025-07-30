@@ -9,6 +9,7 @@ import { LoginPage } from './pages/LoginPage';
 import { ProtectedRoute } from './components/layout/MainLayout';
 import { useEmployees } from './hooks/api/useEmployees';
 import { AppSkeleton } from './components/layout/AppSkeleton';
+import { Toaster } from './components/ui/sonner';
 
 const App: React.FC = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -86,6 +87,7 @@ const App: React.FC = () => {
           </div>
         </div>
       </div>
+      <Toaster position="top-right" richColors closeButton expand={false} duration={4000} />
     </BrowserRouter>
   );
 };

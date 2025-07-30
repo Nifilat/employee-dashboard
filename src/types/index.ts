@@ -71,3 +71,13 @@ export interface MenuItem {
   icon: React.ComponentType<{ size?: number | string }>;
   isActive: boolean;
 }
+
+export interface ToastProps {
+  title?: string;
+  description?: string;
+  variant?: 'default' | 'destructive' | 'success';
+  action?: {
+    label: string;
+    onClick: () => void;
+  };
+}
