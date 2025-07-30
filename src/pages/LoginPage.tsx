@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { auth } from '@/config/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/hooks/api/useAuth';
 import { Navigate } from 'react-router-dom';
 
 const db = getFirestore();

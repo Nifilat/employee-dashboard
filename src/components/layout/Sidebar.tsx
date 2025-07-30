@@ -2,7 +2,7 @@ import React from 'react';
 import { ChevronLeft, ChevronRight, Sun, Moon, LogOutIcon } from 'lucide-react';
 import type { MenuItem } from '../../types';
 import { mainMenuItems, bottomMenuItems } from '../../constants/menuItems';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/hooks/api/useAuth';
 import { useLocation, useNavigate } from 'react-router-dom';
 import type { SidebarProps } from './types';
 
