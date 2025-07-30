@@ -39,6 +39,7 @@ export const useEmployeeModal = ({ employee, onSave, onClose }: UseEmployeeModal
           profilePhoto: base64,
         }));
       } catch (error) {
+        console.error('Failed to process image file:', error);
         toast({
           title: 'Error',
           description: 'Failed to process the image file.',
@@ -84,6 +85,7 @@ export const useEmployeeModal = ({ employee, onSave, onClose }: UseEmployeeModal
 
         onClose();
       } catch (error) {
+        console.error('Failed to save employee:', error);
         toast({
           title: 'Error',
           description: 'There was an error saving the employee information.',
