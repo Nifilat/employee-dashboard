@@ -7,6 +7,7 @@ import {
   getFilteredRowModel,
   flexRender,
   type ColumnDef,
+  type Row,
 } from '@tanstack/react-table';
 import { ArrowUpDown, Users } from 'lucide-react';
 import {
@@ -40,7 +41,7 @@ export const EmployeeTable: React.FC<EmployeeTableProps> = ({
   onDelete,
 }) => {
   // Custom global filter function
-  const globalFilterFn = (row: any, _columnId: string, value: string) => {
+  const globalFilterFn = (row: Row<Employee>, _columnId: string, value: string) => {
     const employee = row.original as Employee;
     const searchValue = value.toLowerCase();
 
