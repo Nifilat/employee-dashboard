@@ -4,25 +4,27 @@ import { useEmployeeStats } from '@/hooks/useEmployeeStats';
 import { getStatusColor } from '@/utils/statusUtils';
 import type { StatsCardsProps } from './types';
 import { BreakdownCard } from '@/components/cards/BreakdownCard';
+import { StatCard } from '../cards/StatCard';
+import { InsightsCard } from '../cards/InsightsCard';
 
 
 
-// import { getMainStats, getInsightSections } from './constants';
+import { getMainStats, getInsightSections } from './constants';
 
 export const StatsCards: React.FC<StatsCardsProps> = ({ employees = [] }) => {
   const {
     totalEmployees,
-    // newlyHired,
-    // onProbation,
-    // onLeave,
-    // totalPayroll,
+    newlyHired,
+    onProbation,
+    onLeave,
+    totalPayroll,
     departmentCounts,
     statusCounts,
     topDepartments,
   } = useEmployeeStats(employees);
 
-  // const mainStats = getMainStats(totalEmployees, newlyHired, onProbation, onLeave, totalPayroll);
-  // const insightSections = getInsightSections(newlyHired, onProbation);
+  const mainStats = getMainStats(totalEmployees, newlyHired, onProbation, onLeave, totalPayroll);
+  const insightSections = getInsightSections(newlyHired, onProbation);
 
   const departmentItems = topDepartments.map(([department, count]) => ({
     label: department,
@@ -43,9 +45,9 @@ export const StatsCards: React.FC<StatsCardsProps> = ({ employees = [] }) => {
     <div className="space-y-6">
       {/* Main Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {/* {mainStats.map((stat, index) => (
+        {mainStats.map((stat, index) => (
           <StatCard key={index} {...stat} />
-        ))} */}
+        ))}
       </div>
 
       {/* Breakdown */}
@@ -72,7 +74,7 @@ export const StatsCards: React.FC<StatsCardsProps> = ({ employees = [] }) => {
       )}
 
       {/* Quick Insights */}
-      {/* <InsightsCard sections={insightSections} /> */}
+      <InsightsCard sections={insightSections} />
     </div>
   );
 };
