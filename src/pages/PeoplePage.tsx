@@ -40,13 +40,13 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
-  const filtered = filteredEmployees(employees, {
+  const filtered = filteredEmployees([...employees].reverse(), {
     searchQuery: globalFilter,
     statusFilter,
     departmentFilter,
     employmentTypeFilter,
     jobTitleFilter,
-    sortBy: 'date',
+    sortBy: sorting.find(s => s.id === 'hireDate')?.desc !== undefined ? 'date' : undefined,
   });
 
   const handleView = (employee: Employee) => {

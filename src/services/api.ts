@@ -12,6 +12,7 @@ import { employeesCollection } from '@/config/firebase';
 import { getFirestore } from 'firebase/firestore';
 import type { Employee, ContractType, EmploymentStatus, Department } from '@/types';
 import type { SupervisorOption } from '@/components/modals/types';
+import { serverTimestamp } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { app } from '@/config/firebase';
 
@@ -87,6 +88,8 @@ export const fetchEmployees = async (): Promise<Employee[]> => {
         salary: data.salary || 0,
         probationStatus: data.probationStatus || 'N/A',
         profilePhoto: data.profilePhoto || '',
+        createdAt: data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : '',
+        updatedAt: data.updatedAt?.toDate ? data.updatedAt.toDate().toISOString() : '',
       } as Employee;
     });
     return employees;
@@ -97,7 +100,9 @@ export const fetchEmployees = async (): Promise<Employee[]> => {
 };
 
 function removeUndefinedFields<T extends object>(obj: T): Partial<T> {
-  return Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined)) as Partial<T>;
+  return Object.fromEntries(
+    Object.entries(obj).filter(([, v]) => v !== undefined && v !== null)
+  ) as Partial<T>;
 }
 
 /**
@@ -131,6 +136,8 @@ export const addEmployee = async (employee: Omit<Employee, 'id'>, profilePhoto?:
   const cleanEmployee = removeUndefinedFields({
     ...employee,
     profilePhoto: profilePhotoUrl,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
   });
   const docRef = await addDoc(employeesCollection, cleanEmployee);
   return docRef.id;
@@ -144,15 +151,23 @@ export const addEmployee = async (employee: Omit<Employee, 'id'>, profilePhoto?:
 export const updateEmployee = async (employee: Employee, profilePhoto?: File) => {
   const { id, ...employeeData } = employee;
   let profilePhotoUrl = employee.profilePhoto || '';
+
   if (profilePhoto) {
     profilePhotoUrl = await uploadEmployeeProfilePhoto(profilePhoto, id);
   }
+
   const cleanEmployeeData = removeUndefinedFields({
     ...employeeData,
     profilePhoto: profilePhotoUrl,
   });
+
+  const finalEmployeeData = {
+    ...cleanEmployeeData,
+    updatedAt: serverTimestamp(),
+  };
+
   const employeeRef = doc(employeesCollection, id);
-  await updateDoc(employeeRef, cleanEmployeeData);
+  await updateDoc(employeeRef, finalEmployeeData);
 };
 
 export const deleteEmployee = async (employeeId: string) => {

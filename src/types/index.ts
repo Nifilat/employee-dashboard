@@ -19,6 +19,8 @@ export interface Employee {
   profilePhoto?: string;
   salary?: number;
   probationStatus?: 'In Probation' | 'Completed' | 'N/A';
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export const Department = {
@@ -62,7 +64,7 @@ export interface EmployeeFilters {
   departmentFilter: string;
   employmentTypeFilter: string;
   jobTitleFilter: string;
-  sortBy: SortOption;
+  sortBy: SortOption | undefined;
 }
 
 export interface MenuItem {

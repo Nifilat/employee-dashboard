@@ -45,13 +45,17 @@ export const filteredEmployees = (employees: Employee[], filters: EmployeeFilter
   }
 
   // Sort
+  // Sort
   filtered = filtered.sort((a, b) => {
     if (sortBy === 'name') {
       return a.firstName.localeCompare(b.firstName);
     } else if (sortBy === 'date') {
+      // When user explicitly clicks date sort, use hireDate
       return new Date(b.hireDate).getTime() - new Date(a.hireDate).getTime();
     }
-    return 0;
+
+    // Default fallback sort — newest created first
+    return new Date(b.createdAt || '').getTime() - new Date(a.createdAt || '').getTime();
   });
 
   return filtered;
