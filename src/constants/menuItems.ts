@@ -2,12 +2,9 @@ import {
   LayoutGrid,
   Users,
   FileText,
-  Clock,
-  Heart,
   TrendingUp,
   User,
   Search,
-  Folder,
   Settings,
   HelpCircle,
 } from 'lucide-react';
@@ -17,12 +14,9 @@ export const mainMenuItems: MenuItem[] = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutGrid, isActive: false },
   { id: 'people', label: 'People', icon: Users, isActive: true },
   { id: 'payslip', label: 'Payslip', icon: FileText, isActive: false },
-  { id: 'time-tools', label: 'Time tools', icon: Clock, isActive: false },
-  { id: 'benefited', label: 'Benefited', icon: Heart, isActive: false },
   { id: 'performance', label: 'Performance', icon: TrendingUp, isActive: false },
   { id: 'personal-details', label: 'Personal details', icon: User, isActive: false },
   { id: 'job-reference', label: 'Job & Reference', icon: Search, isActive: false },
-  { id: 'document', label: 'Document', icon: Folder, isActive: false },
 ];
 
 export const bottomMenuItems: MenuItem[] = [

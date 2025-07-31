@@ -14,7 +14,7 @@ const SidebarSettingLogout: React.FC<{
   return (
     <div className="relative">
       <div
-        className="flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors text-gray-600 hover:bg-gray-50"
+        className="flex items-center gap-3 px-3 py-5 rounded-lg cursor-pointer transition-colors text-sidebar-foreground hover:bg-muted"
         title={isCollapsed ? label : ''}
       >
         <IconComponent size={20} />
@@ -51,7 +51,7 @@ const DarkModeToggle: React.FC<{ isCollapsed: boolean }> = ({ isCollapsed }) => 
   return (
     <button
       onClick={() => setIsDark(d => !d)}
-      className="flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors text-gray-600 hover:bg-gray-50 w-full"
+      className="flex items-center gap-3 px-3 py-5 rounded-lg cursor-pointer transition-colors text-sidebar-foreground hover:bg-muted w-full"
       title={isCollapsed ? (isDark ? 'Light mode' : 'Dark mode') : ''}
       aria-label="Toggle dark mode"
     >
@@ -93,7 +93,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
       </div>
 
       {/* Navigation */}
-      <div className="flex-1 px-3 py-4 overflow-y-auto">
+      <div className="flex-1 px-2 py-2">
         <nav className="space-y-1">
           {mainMenuItems.map((item: MenuItem) => {
             const IconComponent = item.icon;
@@ -101,7 +101,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
             return (
               <div
                 key={item.id}
-                className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors ${
+                className={`flex items-center gap-3 px-3 py-5 rounded-lg cursor-pointer transition-colors ${
                   isActive
                     ? 'bg-accent text-accent-foreground'
                     : 'text-sidebar-foreground hover:bg-muted'
@@ -125,7 +125,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
               await logout();
               navigate('/login');
             }}
-            className="flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors text-gray-600 hover:bg-gray-50 w-full"
+            className="flex items-center gap-3 px-3 py-5 rounded-lg cursor-pointer transition-colors text-sidebar-foreground hover:bg-muted w-full"
             title={isCollapsed ? 'Logout' : ''}
           >
             <LogOutIcon size={20} />
@@ -147,7 +147,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
             return (
               <div
                 key={item.id}
-                className="flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors text-gray-600 hover:bg-gray-50"
+                className="flex items-center gap-3 px-3 py-5 rounded-lg cursor-pointer transition-colors text-sidebar-foreground hover:bg-muted"
                 title={isCollapsed ? item.label : ''}
               >
                 <IconComponent size={20} />
