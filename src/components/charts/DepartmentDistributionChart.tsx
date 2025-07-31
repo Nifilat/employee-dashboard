@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 import type { DepartmentDistributionChartProps } from './types';
+import { colors } from './constants';
 
 export const DepartmentDistributionChart: React.FC<DepartmentDistributionChartProps> = ({
   employees,
@@ -10,20 +11,6 @@ export const DepartmentDistributionChart: React.FC<DepartmentDistributionChartPr
     employees.forEach(emp => {
       deptCounts[emp.department] = (deptCounts[emp.department] || 0) + 1;
     });
-
-    const colors = [
-      '#8B5CF6',
-      '#06B6D4',
-      '#10B981',
-      '#F59E0B',
-      '#EF4444',
-      '#6366F1',
-      '#F472B6',
-      '#FACC15',
-      '#34D399',
-      '#60A5FA',
-      '#A78BFA',
-    ];
 
     return Object.entries(deptCounts).map(([name, value], i) => ({
       name,

@@ -9,6 +9,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import type { EmployeeGrowthChartProps } from './types';
+import { months } from './constants';
 
 export const EmployeeGrowthChart: React.FC<EmployeeGrowthChartProps> = ({ employees }) => {
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
@@ -36,20 +37,6 @@ export const EmployeeGrowthChart: React.FC<EmployeeGrowthChartProps> = ({ employ
       }
     });
 
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
     return months.map(month => ({
       month,
       employees: growth[month] || 0,
