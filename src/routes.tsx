@@ -10,8 +10,14 @@ import { useEmployees } from './hooks/api/useEmployees';
 import { AppSkeleton } from './components/layout/AppSkeleton';
 
 export const AppRoutes: React.FC = () => {
-  const { employees, loading, handleAddEmployee, handleUpdateEmployee, handleDeleteEmployee } =
-    useEmployees();
+  const {
+    employees,
+    hasFetched,
+    loading,
+    handleAddEmployee,
+    handleUpdateEmployee,
+    handleDeleteEmployee,
+  } = useEmployees();
 
   return (
     <Routes>
@@ -22,7 +28,7 @@ export const AppRoutes: React.FC = () => {
         element={
           <ProtectedRoute>
             <AuthLayout>
-              {loading ? <AppSkeleton /> : <Dashboard employees={employees} />}
+              {loading && !hasFetched ? <AppSkeleton /> : <Dashboard employees={employees} />}
             </AuthLayout>
           </ProtectedRoute>
         }
@@ -33,7 +39,7 @@ export const AppRoutes: React.FC = () => {
         element={
           <ProtectedRoute>
             <AuthLayout>
-              {loading ? (
+              {loading && !hasFetched ? (
                 <AppSkeleton />
               ) : (
                 <PeoplePage

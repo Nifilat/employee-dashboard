@@ -6,6 +6,7 @@ import type { Employee } from '@/types';
 export const useEmployees = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
+  const [hasFetched, setHasFetched] = useState(false);
 
   useEffect(() => {
     loadEmployees();
@@ -15,9 +16,10 @@ export const useEmployees = () => {
     setLoading(true);
     try {
       const data = await fetchEmployees();
+
       setEmployees(data);
     } catch (error) {
-      console.error('Failed to load employees:', error);
+      console.error('[useEmployees] Failed to fetch employees:', error);
       toast({
         title: 'Error',
         description: 'Failed to load employees',
@@ -25,6 +27,8 @@ export const useEmployees = () => {
       });
     } finally {
       setLoading(false);
+      setHasFetched(true);
+      console.log('[useEmployees] Done loading.');
     }
   };
 
@@ -37,7 +41,7 @@ export const useEmployees = () => {
         description: 'Employee added successfully',
       });
     } catch (error) {
-      console.error('Failed to add employee:', error);
+      console.error('[useEmployees] Failed to add employee:', error);
       toast({
         title: 'Error',
         description: 'Failed to add employee',
@@ -55,7 +59,7 @@ export const useEmployees = () => {
         description: 'Employee updated successfully',
       });
     } catch (error) {
-      console.error('Failed to update employee:', error);
+      console.error('[useEmployees] Failed to update employee:', error);
       toast({
         title: 'Error',
         description: 'Failed to update employee',
@@ -73,7 +77,7 @@ export const useEmployees = () => {
         description: 'Employee deleted successfully',
       });
     } catch (error) {
-      console.error('Failed to delete employee:', error);
+      console.error('[useEmployees] Failed to delete employee:', error);
       toast({
         title: 'Error',
         description: 'Failed to delete employee',
@@ -89,5 +93,6 @@ export const useEmployees = () => {
     handleUpdateEmployee,
     handleDeleteEmployee,
     refetch: loadEmployees,
+    hasFetched,
   };
 };
