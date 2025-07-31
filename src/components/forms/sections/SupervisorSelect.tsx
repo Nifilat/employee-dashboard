@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import type { SupervisorSelectProps } from './types';
 import {
   Select,
@@ -19,22 +19,22 @@ export const SupervisorSelect: React.FC<SupervisorSelectProps> = ({
   const [supervisors, setSupervisors] = useState<SupervisorOption[]>([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const loadSupervisors = async () => {
-      setLoading(true);
-      try {
-        const sups = await fetchSupervisorsByDepartment(department);
-        setSupervisors(sups);
-      } catch (error) {
-        console.error('Failed to load supervisors:', error);
-        setSupervisors([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadSupervisors();
+  const loadSupervisors = useCallback(async () => {
+    setLoading(true);
+    try {
+      const sups = await fetchSupervisorsByDepartment(department);
+      setSupervisors(sups);
+    } catch (error) {
+      console.error('Failed to load supervisors:', error);
+      setSupervisors([]);
+    } finally {
+      setLoading(false);
+    }
   }, [department]);
+
+  useEffect(() => {
+    loadSupervisors();
+  }, [loadSupervisors]);
 
   return (
     <div className="space-y-2">
