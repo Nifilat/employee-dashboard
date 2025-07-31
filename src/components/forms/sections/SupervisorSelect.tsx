@@ -1,4 +1,3 @@
-// components/SupervisorSelect.tsx
 import React, { useState, useEffect } from 'react';
 import type { SupervisorSelectProps } from './types';
 import {

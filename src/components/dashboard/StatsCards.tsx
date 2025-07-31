@@ -7,8 +7,6 @@ import { BreakdownCard } from '@/components/cards/BreakdownCard';
 import { StatCard } from '../cards/StatCard';
 import { InsightsCard } from '../cards/InsightsCard';
 
-
-
 import { getMainStats, getInsightSections } from './constants';
 
 export const StatsCards: React.FC<StatsCardsProps> = ({ employees = [] }) => {
