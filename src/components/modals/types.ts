@@ -52,3 +52,15 @@ export interface UseEmployeeModalProps {
   onSave: (employee: Employee) => void;
   onClose: () => void;
 }
+
+export interface ExportModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  employees: Employee[];
+}
+
+export interface ViewEmployeeModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  employee: Employee | null;
+}
