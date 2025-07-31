@@ -4,14 +4,18 @@ import { auth } from '@/config/firebase';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import { AuthContext } from '@/context/context';
 import type { AuthUser } from './types';
+import { useNavigate } from 'react-router-dom';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const navigate = useNavigate();
+
   const logout = async () => {
     await auth.signOut();
     setUser(null);
+    navigate('/login');
   };
 
   // Session timeout logic

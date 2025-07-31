@@ -121,15 +121,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
       <div className="px-3 pb-4 space-y-4">
         <div className="space-y-1 border-t border-gray-300 pt-4">
           <button
-            onClick={async () => {
-              await logout();
-              navigate('/login');
-            }}
+            onClick={logout}
             className="flex items-center gap-3 px-3 py-5 rounded-lg cursor-pointer transition-colors text-sidebar-foreground hover:bg-muted w-full"
             title={isCollapsed ? 'Logout' : ''}
           >
             <LogOutIcon size={20} />
-            {!isCollapsed && <span className="text-sm">{'Logout'}</span>}
+            {!isCollapsed && <span className="text-sm">Logout</span>}
           </button>
 
           {bottomMenuItems.map(item => {
