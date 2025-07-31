@@ -1,11 +1,6 @@
 import React from 'react';
 import { getAvatarUrl } from '../../utils';
-
-interface AvatarProps {
-  name: string;
-  imageUrl?: string;
-  size?: 'sm' | 'md' | 'lg';
-}
+import type { AvatarProps } from './types';
 
 export const Avatar: React.FC<AvatarProps> = ({ name, imageUrl, size = 'md' }) => {
   const sizeClasses = {
