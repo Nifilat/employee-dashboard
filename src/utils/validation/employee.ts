@@ -1,25 +1,18 @@
 import type { EmployeeFormData } from '@/components/modals/types';
 
-/**
- * Validates phone number format
- * Accepts formats like: +1234567890, (123) 456-7890, 123-456-7890, 123.456.7890, 1234567890
- */
 const validatePhoneNumber = (phone: string): boolean => {
-  // Remove all non-digit characters to check length
   const digitsOnly = phone.replace(/\D/g, '');
-  
-  // Phone should have 10-15 digits (international format consideration)
+
   if (digitsOnly.length < 10 || digitsOnly.length > 15) {
     return false;
   }
-  
-  // Common phone number patterns
+
   const phonePatterns = [
     /^\+?1?[-.\s]?\(?[0-9]{3}\)?[-.\s]?[0-9]{3}[-.\s]?[0-9]{4}$/, // US format
     /^\+?[1-9]\d{1,14}$/, // International format (E.164)
     /^[0-9]{10,15}$/, // Simple digit format
   ];
-  
+
   return phonePatterns.some(pattern => pattern.test(phone));
 };
 
@@ -28,13 +21,12 @@ const validatePhoneNumber = (phone: string): boolean => {
  */
 const validateHireDate = (dateString: string): boolean => {
   if (!dateString) return false;
-  
+
   const hireDate = new Date(dateString);
   const today = new Date();
-  
-  // Set today to end of day to allow today's date
+
   today.setHours(23, 59, 59, 999);
-  
+
   return hireDate <= today;
 };
 
@@ -64,7 +56,8 @@ export const validateFormData = (formData: EmployeeFormData): string | null => {
   if (!formData.hireDate.trim()) return 'Hire date is required';
   if (!formData.emergencyContactName.trim()) return 'Emergency contact name is required';
   if (!formData.emergencyContactPhone.trim()) return 'Emergency contact phone is required';
-  if (!formData.emergencyContactRelationship.trim()) return 'Emergency contact relationship is required';
+  if (!formData.emergencyContactRelationship.trim())
+    return 'Emergency contact relationship is required';
 
   // Name validation
   if (!validateName(formData.firstName)) {
