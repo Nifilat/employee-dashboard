@@ -64,3 +64,11 @@ export interface ViewEmployeeModalProps {
   onClose: () => void;
   employee: Employee | null;
 }
+
+export interface DeleteEmployeeModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  employee: Employee | null;
+  onConfirmDelete: (employeeId: string) => void;
+  loading?: boolean;
+}

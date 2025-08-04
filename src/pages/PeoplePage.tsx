@@ -2,19 +2,15 @@ import React, { useState } from 'react';
 import { Plus, Download } from 'lucide-react';
 import { type SortingState, type ColumnFiltersState } from '@tanstack/react-table';
 import type { Employee } from '../types';
-import { EmployeeModal, ViewEmployeeModal, ExportModal } from '@/components/modals';
+import {
+  EmployeeModal,
+  ViewEmployeeModal,
+  ExportModal,
+  DeleteEmployeeModal,
+} from '@/components/modals';
 import { EmployeeTable } from '../components/tables/EmployeeTable';
 import { EmployeeFilters, StatusTabs } from '@/components/filters';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogFooter,
-  DialogTitle,
-  DialogDescription,
-  DialogClose,
-  Button,
-} from '@/components/ui';
+import { Button } from '@/components/ui';
 import type { PeoplePageProps } from './types';
 import { filteredEmployees } from '../utils';
 
@@ -25,7 +21,6 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
   onDeleteEmployee,
 }) => {
   const [globalFilter, setGlobalFilter] = useState('');
-
   const [statusFilter, setStatusFilter] = useState('All');
   const [departmentFilter, setDepartmentFilter] = useState('all');
   const [employmentTypeFilter, setEmploymentTypeFilter] = useState('all');
@@ -34,11 +29,12 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
   const [showExportModal, setShowExportModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [showEmployeeModal, setShowEmployeeModal] = useState(false);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const [rowSelection, setRowSelection] = useState({});
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const filtered = filteredEmployees([...employees].reverse(), {
     searchQuery: globalFilter,
@@ -61,7 +57,19 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
 
   const handleDelete = (employee: Employee) => {
     setSelectedEmployee(employee);
-    setShowDeleteDialog(true);
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = async (employeeId: string) => {
+    setIsDeleting(true);
+    try {
+      await onDeleteEmployee(employeeId);
+    } catch (error) {
+      console.error('Error deleting employee:', error);
+    } finally {
+      setIsDeleting(false);
+      setSelectedEmployee(null);
+    }
   };
 
   const handleSaveEmployee = (employeeData: Employee) => {
@@ -119,7 +127,7 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
       <StatusTabs statusFilter={statusFilter} setStatusFilter={setStatusFilter} />
 
       {/* Sick Leave Banner */}
-      <div className=" border border-ring rounded-lg p-4">
+      <div className="border border-ring rounded-lg p-4">
         <h3 className="font-medium text-primary mb-1">Sick Leave Policy</h3>
         <p className="text-sm text-foreground">
           Employees can be enrolled in one sick policy. Make sure that your policy is compliant with
@@ -181,38 +189,16 @@ export const PeoplePage: React.FC<PeoplePageProps> = ({
         onSave={handleSaveEmployee}
       />
 
-      {/* Delete Confirmation Dialog */}
-      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete Employee</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete{' '}
-              <span className="font-semibold">
-                {selectedEmployee?.firstName} {selectedEmployee?.lastName}
-              </span>
-              ?
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DialogClose>
-            <Button
-              variant="destructive"
-              onClick={() => {
-                if (selectedEmployee) {
-                  onDeleteEmployee(selectedEmployee.id);
-                }
-                setShowDeleteDialog(false);
-                setSelectedEmployee(null);
-              }}
-            >
-              Delete
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <DeleteEmployeeModal
+        isOpen={showDeleteModal}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setSelectedEmployee(null);
+        }}
+        employee={selectedEmployee}
+        onConfirmDelete={handleConfirmDelete}
+        loading={isDeleting}
+      />
     </div>
   );
 };
